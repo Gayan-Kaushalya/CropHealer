@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import WelcomeScreen from "../screens/WelcomeScreen";
 import ArticleListScreen from "../screens/ArticleListScreen";
 import DiseaseDetailsScreen from "../screens/DiseaseDetailsScreen";
+import PredictionScreen from "../screens/PredictionScreen";
 
 const Stack = createNativeStackNavigator();  
 
@@ -13,8 +14,10 @@ const AppNavigator = () => {
         <NavigationContainer>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
             {/*    <Stack.Screen name="Welcome" component={WelcomeScreen} /> */}
-                <Stack.Screen name="ArticleList" component={ArticleListScreen} />
-                <Stack.Screen name="DiseaseDetails" component={DiseaseDetailsScreen} />
+                <Stack.Screen name="Welcome" component={WelcomeScreen} />
+                <Stack.Screen name="Predict" component={PredictionScreen} />
+                <Stack.Screen name="Article List" component={ArticleListScreen} />
+                <Stack.Screen name="Disease Details" component={DiseaseDetailsScreen} />
             </Stack.Navigator>
         </ NavigationContainer> 
     );
