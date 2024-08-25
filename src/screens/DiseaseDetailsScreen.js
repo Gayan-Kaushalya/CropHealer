@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Image, SafeAreaView, Pressable } from "react-native";
+import { StyleSheet, Text, View, Image, SafeAreaView, Pressable, ScrollView } from "react-native";
 import React from "react";
 import { FontAwesome } from "@expo/vector-icons";
 
@@ -9,7 +9,7 @@ const DiseaseDetailsScreen = ({ navigation, route }) => {
     console.log("Disease:", disease);
 
     return (
-        <View style={{ backgroundColor: "#6f4e37", flex: 1 }}>
+        <ScrollView style={{ backgroundColor: disease.color, flex: 1 }} showsVerticalScrollIndicator={false}>
             <SafeAreaView style={{ flexDirection: "row", marginHorizontal: 16 }}>
                 <Pressable style={{ flex: 1 }} onPress={() => navigation.goBack()}>
                     <FontAwesome name={"arrow-circle-left"} size={28} color="black" />
@@ -24,6 +24,7 @@ const DiseaseDetailsScreen = ({ navigation, route }) => {
                     borderTopLeftRadius: 56,
                     borderTopRightRadius: 56,
                     alignItems: "center",
+                    paddingHorizontal: 16,
                 }}>
                 <View style={{
                     height: 300,
@@ -31,10 +32,27 @@ const DiseaseDetailsScreen = ({ navigation, route }) => {
                     position: "absolute",
                     top: -150,
                 }}>
-                    <Image source={require("../../assets/diseases/anthracnose.png")} style={{ height: "100%", width: "100%", resizeMode: "contain" }} />
+                    <Image source={disease.image} style={{ height: "100%", width: "100%", resizeMode: "contain" }} />
+                </View>
+
+                {/* Disease Name */}
+                <Text style={{ fontSize: 24, fontWeight: "bold", marginTop: 160 }}>{disease.disease}</Text>
+
+                {/* Description */}    
+                <Text style={{ marginHorizontal: 16, textAlign: "center", marginTop: 16 }}>{disease.description}</Text>
+
+                {/* Extra Details */}
+                <View style={{ alignSelf: "flex-start", marginHorizontal: 22, marginBottom: 16}}>
+                    <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 16 }}>Crops:</Text>
+                    <Text>{disease.crops.join(", ")}</Text>
+                    <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 16 }}>Preventive Measures:</Text>
+                    {disease.preventive_measures.map((item, index) => (
+                        <Text key={index}>{index + 1}. {item}</Text>
+                    ))}
+
                 </View>
             </View>
-        </View>
+        </ScrollView>
     );
 };
 
