@@ -10,7 +10,8 @@ export const diseaseList = [
             "Space plants properly to allow for good air circulation.",
             "Avoid overhead irrigation.",
             "Apply fungicides preventatively."
-        ]
+        ],
+        color: "red"
     },
     {
         id : "2",
@@ -23,7 +24,8 @@ export const diseaseList = [
             "Space plants properly to allow for good air circulation.",
             "Avoid overhead irrigation.",
             "Apply fungicides preventatively."
-        ]
+        ],
+        color: "#6f4e37"
     },
     {
         id: "3",
@@ -36,7 +38,8 @@ export const diseaseList = [
             "Space plants properly to allow for good air circulation.",
             "Avoid overhead irrigation.",
             "Apply copper-based fungicides preventatively."
-        ]
+        ],
+        color: "#6f4e37"
     },
     {
         id: "4",
@@ -49,7 +52,8 @@ export const diseaseList = [
             "Space plants properly to allow for good air circulation.",
             "Avoid overhead irrigation.",
             "Apply fungicides preventatively."
-        ]
+        ],
+        color: "#6f4e37"
     },
     {
         id: "5",
@@ -62,7 +66,8 @@ export const diseaseList = [
             "Space plants properly to allow for good air circulation.",
             "Avoid overhead irrigation.",
             "Apply fungicides preventatively."
-        ]
+        ],
+        color: "#6f4e37"
     },
     {
         id: "6",
@@ -75,6 +80,7 @@ export const diseaseList = [
             "Space plants properly to allow for good air circulation.",
             "Avoid overhead irrigation.",
             "Apply fungicides preventatively."
-        ]
+        ],
+        color: "#6f4e37"
     }
 ];
