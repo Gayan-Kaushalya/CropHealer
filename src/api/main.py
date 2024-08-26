@@ -5,10 +5,16 @@ import numpy as np
 from io import BytesIO
 from PIL import Image
 import tensorflow as tf
+from tensorflow import keras
+import os
 
 app = FastAPI()
 
-MODEL = tf.keras.models.load_model("../models/pepper")
+model_path = "src/models/potatoModel.h5"
+if os.path.exists(model_path):
+    MODEL = tf.keras.models.load_model(model_path)
+else:
+    raise FileNotFoundError(f"Model file not found at path: {model_path}")
 CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
 
 @app.get("/ping")
@@ -29,7 +35,7 @@ async def predict(file : UploadFile = File(...)):
   img_batch = np.expand_dims(image, 0)
   prediction = MODEL.predict(img_batch)
   
-  pass
+  return {"class": CLASS_NAMES[np.argmax(prediction[0])]}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8001)
