@@ -61,7 +61,14 @@ async def predict(file : UploadFile = File(...)):
     if crop == "Potato":
         next_model = tf.keras.models.load_model(potato_model_path)
         prediction = next_model.predict(img_batch)
-        return {"class": POTATO_CLASS_NAMES[np.argmax(prediction[0])] , "confidence": float(np.max(prediction[0]))}
+        
+        predicted_class = POTATO_CLASS_NAMES[np.argmax(prediction[0])]
+        predicted_class_confidence = np.max(prediction[0])
+        
+        second_prediction_class = POTATO_CLASS_NAMES[np.argsort(prediction[0])[-2]]
+        second_prediction_confidence = np.sort(prediction[0])[-2]
+        
+        return {"class": POTATO_CLASS_NAMES[np.argmax(prediction[0])] , "confidence": float(np.max(prediction[0])), "second_prediction_class": second_prediction_class, "second_prediction_confidence": float(second_prediction_confidence)}
     
     if crop == "Tomato":
         next_model = tf.keras.models.load_model(tomato_model_path)
@@ -71,7 +78,7 @@ async def predict(file : UploadFile = File(...)):
     if crop == "Pepper":
         next_model = tf.keras.models.load_model(pepper_model_path)
         prediction = next_model.predict(img_batch)
-        return {"class": PEPPER_CLASS_NAMES[np.argmax(prediction[0])] , "confidence": float(np.max(prediction[0]))}
+        return {"crop": crop, "class": PEPPER_CLASS_NAMES[np.argmax(prediction[0])] , "confidence": float(np.max(prediction[0]))}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8001)
