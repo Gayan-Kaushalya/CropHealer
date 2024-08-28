@@ -28,6 +28,7 @@ def read_file_as_image(file) -> np.ndarray:
 
 
 @app.post("/predict")
+
 async def predict(file : UploadFile = File(...)):
     
  # bytes = await file.read()
@@ -35,7 +36,10 @@ async def predict(file : UploadFile = File(...)):
   img_batch = np.expand_dims(image, 0)
   prediction = MODEL.predict(img_batch)
   
-  return {"class": CLASS_NAMES[np.argmax(prediction[0])]}
+  #first_prediction_class = CLASS_NAMES[np.argmax(prediction[0])]
+  #first_prediction_confidence = np.max(prediction[0])
+  
+  return {"class": CLASS_NAMES[np.argmax(prediction[0])] , "confidence": float(np.max(prediction[0]))}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8001)
