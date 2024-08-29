@@ -21,7 +21,7 @@ const PredictScreen = ({navigation}) => {
  
 
   function uploadImage(file) {
-      const formData = new FormData();
+    let formData = new FormData();
       formData.append('file', file);
     
       fetch('http://localhost:8001/predict', {
@@ -55,23 +55,12 @@ const pickImage = async () => {
     );
 
     if (!result.canceled) {
-      // If an image is selected (not cancelled), update the file state variable
-      const uri = result.assets[0].uri;
-      console.log(uri)
-      const formData = new FormData();
-      formData.append('file', {
-        uri : uri,
-        name: 'Image.jpg',
-        type: 'image/jpeg'
-      });
-      console.log(formData.get('file').name)
+
+
       try {
         // Send the image to the prediction endpoint
-        const response = await axios.post('http://localhost:8001/predict', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
+        console.log(result.assets[0].base64)
+        const response = await axios.post('http://localhost:8001/predict', {base64:result.assets[0].uri.split(",")[1]});
 
         // Handle the response from the server
         console.log('Response from server: ', response.data);

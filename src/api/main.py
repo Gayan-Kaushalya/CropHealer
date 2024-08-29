@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Body
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import uvicorn
@@ -8,6 +8,8 @@ from PIL import Image
 import tensorflow as tf
 from tensorflow import keras
 import os
+import base64
+from pydantic import BaseModel
 
 app = FastAPI()
 
@@ -29,7 +31,7 @@ if os.path.exists(plant_model_path):
 else:
     raise FileNotFoundError(f"Model file not found at path: {potato_model_path}")
 
-CLASS_NAMES = ["Potato", "Tomato", "Pepper"]
+CLASS_NAMES = ["Pepper","Potato", "Tomato"]
 POTATO_CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
 TOMATO_CLASS_NAMES = ['Bacterial_spot',
  'Early_blight',
@@ -50,44 +52,40 @@ async def ping():
 
 
 def read_file_as_image(file) -> np.ndarray:
-    print(file)
+    #print(file)
     image = np.array(Image.open(BytesIO(file)))
     return image
 
 
-@app.post("/predict")
+class ImageData(BaseModel):
+    base64: str
 
-async def predict(file : UploadFile = File(...)):
-    
-    print(file.content_type)
-    if file.content_type not in ["image/jpeg", "image/png"]:
-        return JSONResponse(status_code=415, content={"message": "Unsupported file type"})
-    
-    # bytes = await file.read()
-    image = read_file_as_image(await file.read())
+@app.post("/predict")
+async def predict(image_data:ImageData):
+    print(image_data.base64)
+    image_data_bytes = base64.b64decode(image_data.base64)
+    image_bytes_io = BytesIO(image_data_bytes)
+    image = Image.open(image_bytes_io)
+    image = read_file_as_image(image_data_bytes)
     img_batch = np.expand_dims(image, 0)
     prediction = MODEL.predict(img_batch)
     
-    #first_prediction_class = CLASS_NAMES[np.argmax(prediction[0])]
-    #first_prediction_confidence = np.max(prediction[0])
     crop = CLASS_NAMES[np.argmax(prediction[0])]
     
     if crop == "Potato":
         next_model = tf.keras.models.load_model(potato_model_path)
         prediction = next_model.predict(img_batch)
-        
-        return {"crop":crop, "class": POTATO_CLASS_NAMES[np.argmax(prediction[0])] , "confidence": float(np.max(prediction[0]))}
+        return {"crop": crop, "class": POTATO_CLASS_NAMES[np.argmax(prediction[0])], "confidence": float(np.max(prediction[0]))}
     
     if crop == "Tomato":
         next_model = tf.keras.models.load_model(tomato_model_path)
         prediction = next_model.predict(img_batch)
-        return {"crop":crop, "class": TOMATO_CLASS_NAMES[np.argmax(prediction[0])] , "confidence": float(np.max(prediction[0]))}
+        return {"crop": crop, "class": TOMATO_CLASS_NAMES[np.argmax(prediction[0])], "confidence": float(np.max(prediction[0]))}
     
     if crop == "Pepper":
         next_model = tf.keras.models.load_model(pepper_model_path)
         prediction = next_model.predict(img_batch)
-        return {"crop":crop, "class": PEPPER_CLASS_NAMES[np.argmax(prediction[0])] , "confidence": float(np.max(prediction[0]))}
+        return {"crop": crop, "class": PEPPER_CLASS_NAMES[np.argmax(prediction[0])], "confidence": float(np.max(prediction[0]))}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8001)
-    
