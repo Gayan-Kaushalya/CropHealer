@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Alert } from 'react-native';
+import { View, TextInput, Button, Alert, SafeAreaView, Pressable } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 
-const FeedbackForm = () => {
+const FeedbackForm = ({navigation}) => {
     const [feedback, setFeedback] = useState('');
 
     const handleSubmit = () => {
@@ -16,9 +17,15 @@ const FeedbackForm = () => {
     };
 
     return (
-        <View>
+        <View style={{ padding: 20, marginTop: 25 }}>
+            <SafeAreaView style={{ flexDirection: "row", marginHorizontal: 16 , marginTop: 12}}>
+                <Pressable style={{ flex: 1 }} onPress={() => navigation.goBack()}>
+                    <FontAwesome name={"arrow-circle-left"} size={28} color="black" />
+                </Pressable>
+                {/*<FontAwesome name={"heart-o"} size={28} color="black" />*/}
+            </SafeAreaView>
             <TextInput
-                placeholder="Enter your feedback"
+                placeholder="Provide information about the wrong prediction."
                 value={feedback}
                 onChangeText={text => setFeedback(text)}
                 multiline

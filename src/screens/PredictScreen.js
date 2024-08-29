@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, Image, PermissionsAndroid, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Button, Image, PermissionsAndroid, StyleSheet, TouchableOpacity, Alert, SafeAreaView, Pressable } from 'react-native';
 import axios from 'axios';
-import { launchCamera } from 'react-native-image-picker';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { useNavigation } from '@react-navigation/native';
+import { FontAwesome } from '@expo/vector-icons'; // Make sure you have expo-vector-icons installed
 import * as ImagePicker from 'expo-image-picker';
+import { cos } from '@tensorflow/tfjs';
 
 const PredictScreen = ({navigation}) => {
   const [message, setMessage] = useState('');
@@ -15,36 +18,79 @@ const PredictScreen = ({navigation}) => {
 
     // Function to pick an image from 
     //the device's media library
-    const pickImage = async () => {
-        const { status } = await ImagePicker.
-            requestMediaLibraryPermissionsAsync();
+ 
 
-        if (status !== "granted") {
+  function uploadImage(file) {
+      const formData = new FormData();
+      formData.append('file', file);
+    
+      fetch('http://localhost:8001/predict', {
+        method: 'POST',
+        body: formData,
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log('Success:', data);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    }    
 
-            // If permission is denied, show an alert
-            Alert.alert(
-                "Permission Denied",
-                `Sorry, we need camera 
-                 roll permission to upload images.`
-            );
+const pickImage = async () => {
+  const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+  if (status !== "granted") {
+    // If permission is denied, show an alert
+    Alert.alert(
+      "Permission Denied",
+      "Sorry, we need camera roll permission to upload images."
+    );
+  } else {
+    // Launch the image library and get the selected image
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,}
+    );
+
+    if (!result.canceled) {
+      // If an image is selected (not cancelled), update the file state variable
+      const uri = result.assets[0].uri;
+      console.log(uri)
+      const formData = new FormData();
+      formData.append('file', {
+        uri : uri,
+        name: 'Image.jpg',
+        type: 'image/jpeg'
+      });
+      console.log(formData.get('file').name)
+      try {
+        // Send the image to the prediction endpoint
+        const response = await axios.post('http://localhost:8001/predict', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        // Handle the response from the server
+        console.log('Response from server: ', response.data);
+        setMessage(response.data.message);
+      } catch (error) {
+        if (error.response) {
+          // Server responded with a status other than 2xx
+          console.error('Server Error: ', error.response.data);
+        } else if (error.request) {
+          // Request was made but no response received
+          console.error('Network Error: No response received', error.request);
         } else {
-
-            // Launch the image library and get
-            // the selected image
-            const result =
-                await ImagePicker.launchImageLibraryAsync();
-
-            if (!result.canceled) {
-
-                // If an image is selected (not cancelled), 
-                // update the file state variable
-                setFile(result.uri);
-
-                // Clear any previous errors
-                setError(null);
-            }
+          // Something else caused the error
+          console.error('Error: ', error.message);
         }
-    };
+      }
+    }
+  }
+};
 
     
 
@@ -100,7 +146,7 @@ const PredictScreen = ({navigation}) => {
       name: 'image.jpg',
     });
 
-    axios.post('http://192.168.64.103:8001/predict', formData, {
+    axios.post('http://localhost:8001/predict', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -115,7 +161,7 @@ const PredictScreen = ({navigation}) => {
   };
 
   useEffect(() => {
-    axios.get('http://192.168.64.103:8001/predict')
+    axios.get('http://localhost:8001/predict')
       .then(response => {
         setMessage(response.data.message);
       })
@@ -126,6 +172,12 @@ const PredictScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
+      <SafeAreaView style={{ flexDirection: "row", marginHorizontal: 16 , marginTop: 12}}>
+                <Pressable style={{ flex: 1 }} onPress={() => navigation.goBack()}>
+                    <FontAwesome name={"arrow-circle-left"} size={28} color="black" />
+                </Pressable>
+                {/*<FontAwesome name={"heart-o"} size={28} color="black" />*/}
+            </SafeAreaView>
       {/*
       <Button title="Take Photo" onPress={() => launchCameraFunction(setImage)} />
       */}
