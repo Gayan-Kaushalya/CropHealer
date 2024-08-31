@@ -10,11 +10,11 @@ const DiseaseDetailsScreen = ({ navigation, route }) => {
 
     return (
         <ScrollView style={{ backgroundColor: disease.color, flex: 1 }} showsVerticalScrollIndicator={false}>
-            <SafeAreaView style={{ flexDirection: "row", marginHorizontal: 16 }}>
+            <SafeAreaView style={{ flexDirection: "row", marginHorizontal: 16 , marginTop: 12}}>
                 <Pressable style={{ flex: 1 }} onPress={() => navigation.goBack()}>
                     <FontAwesome name={"arrow-circle-left"} size={28} color="black" />
                 </Pressable>
-                <FontAwesome name={"heart-o"} size={28} color="black" />
+                {/*<FontAwesome name={"heart-o"} size={28} color="black" />*/}
             </SafeAreaView>
             <View
                 style={{

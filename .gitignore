@@ -36,3 +36,6 @@ yarn-error.*
 
 # Program data
 %ProgramData%/
+
+gcp/
+.venv/
