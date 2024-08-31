@@ -8,7 +8,7 @@ const WelcomeScreen = ({ navigation }) => {
             <Image source={require("./../../assets/favicon.png")} />
 
             <Text style={{ color: "green", fontSize: 42, fontWeight: "bold" }}>
-                Welcome to the CropHealer!
+                Welcome to CropHealer!
             </Text>
             <Text style={{ fontSize: 24, fontWeight: "bold", marginTop: 20, marginBottom: 20, alignContent: "center", color:"black" }}>
                 Your AI Powered Plant Disease Identifier
