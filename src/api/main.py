@@ -27,9 +27,9 @@ pepper_model_path = "src/models/pepperModel.h5"
 potato_model_path = "src/models/potatoModel.h5"
 
 if os.path.exists(plant_model_path):
-    MODEL = tf.keras.models.load_model(potato_model_path)
+    MODEL = tf.keras.models.load_model(plant_model_path)
 else:
-    raise FileNotFoundError(f"Model file not found at path: {potato_model_path}")
+    raise FileNotFoundError(f"Model file not found at path: {plant_model_path}")
 
 CLASS_NAMES = ["Pepper","Potato", "Tomato"]
 POTATO_CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
@@ -62,7 +62,7 @@ class ImageData(BaseModel):
 
 @app.post("/predict")
 async def predict(image_data:ImageData):
-    print(image_data.base64)
+    #print(image_data.base64)
     image_data_bytes = base64.b64decode(image_data.base64)
     image_bytes_io = BytesIO(image_data_bytes)
     image = Image.open(image_bytes_io)
