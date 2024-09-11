@@ -21,10 +21,10 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-plant_model_path = "src/models/plantModel.h5"
-tomato_model_path = "src/models/tomatoModel.h5"
-pepper_model_path = "src/models/pepperModel.h5"
-potato_model_path = "src/models/potatoModel.h5"
+plant_model_path = "models/plantModel.h5"
+tomato_model_path = "models/tomatoModel.h5"
+pepper_model_path = "models/pepperModel.h5"
+potato_model_path = "models/potatoModel.h5"
 
 if os.path.exists(plant_model_path):
     MODEL = tf.keras.models.load_model(plant_model_path)
