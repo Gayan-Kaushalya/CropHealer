@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Alert, SafeAreaView, Pressable } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+//import { useSendEmail } from '../components';
 
 const FeedbackForm = ({navigation}) => {
     const [feedback, setFeedback] = useState('');

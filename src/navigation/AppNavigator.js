@@ -8,6 +8,7 @@ import DiseaseDetailsScreen from "../screens/DiseaseDetailsScreen";
 //import App  from "../screens/IdentificationScreen";
 import PredictScreen from "../screens/PredictScreen";
 import FeedbackForm from "../screens/Report";
+import ReportScreen from "../screens/ReportScreen";
 
 const Stack = createNativeStackNavigator();  
 
@@ -22,7 +23,7 @@ const AppNavigator = () => {
                 
                 <Stack.Screen name="Article List" component={ArticleListScreen} />
                 <Stack.Screen name="DiseaseDetails" component={DiseaseDetailsScreen} />
-                <Stack.Screen name="FeedbackForm" component={FeedbackForm} />
+                <Stack.Screen name="FeedbackForm" component={ReportScreen} />
             </Stack.Navigator>
         </ NavigationContainer> 
     );
