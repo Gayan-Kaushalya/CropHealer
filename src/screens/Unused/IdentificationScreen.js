@@ -16,7 +16,7 @@ import axios from 'axios';
 import Config from 'react-native-config';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import PermissionsService from './Permissions';
+import PermissionsService from '../Permissions';
 
 axios.interceptors.request.use(
   async config => {
