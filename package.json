@@ -19,6 +19,7 @@
     "expo": "~51.0.28",
     "expo-image-picker": "^15.0.7",
     "expo-mail-composer": "^13.0.1",
+    "expo-print": "^13.0.1",
     "expo-status-bar": "~1.12.1",
     "firebase": "^10.13.1",
     "react": "18.2.0",
