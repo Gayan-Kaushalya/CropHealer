@@ -1,76 +1,55 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, TextInput, Button, View } from 'react-native';
-import { useEffect, useState } from 'react';
-import * as MailComposer from 'expo-mail-composer';
-import * as Print from 'expo-print';
+import { useState } from 'react';
+import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { send, EmailJSResponseStatus } from '@emailjs/react-native';
 
-// expo add expo-print expo-mail-composer
+const ReportScreen = () => {
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
 
-export default function App() {
-  const [isAvailable, setIsAvailable] = useState(false);
-  const [recipients, setRecipients] = useState([]);
-  const [subject, setSubject] = useState(undefined);
-  const [body, setBody] = useState(undefined);
-  const [email, setEmail] = useState(undefined);
+  const onSubmit = async () => {
+    try {
+      await send(
+        'service_fhlmfnl',
+        'template_62sm405',
+        {
+          name,
+          email,
+          message: 'This is a static message',
+        },
+        {
+          publicKey: '92_D5O9PJy86nc9jd',
+        },
+      );
 
-  useEffect(() => {
-    async function checkAvailability() {
-      const isMailAvailable = await MailComposer.isAvailableAsync();
-      setIsAvailable(isMailAvailable);
+      console.log('SUCCESS!');
+    } catch (err) {
+      if (err instanceof EmailJSResponseStatus) {
+        console.log('EmailJS Request Failed...', err);
+      }
+
+      console.log('ERROR', err);
     }
-
-    checkAvailability();
-  }, []);
-
-  const sendMail = async () => {
-    const { uri } = await Print.printToFileAsync({
-      html: "<h1>My pdf!</h1>"
-    });
-
-    MailComposer.composeAsync({
-      subject: subject,
-      body: body,
-      recipients: recipients,
-      attachments: [uri]
-    });
-  };
-
-  const addRecipient = () => {
-    let newRecipients = [...recipients];
-    newRecipients.push(email);
-
-    setRecipients(newRecipients);
-    setEmail(undefined);
-  };
-
-  const showRecipients = () => {
-    if (recipients.length === 0) {
-      return <Text>No recipients added</Text>;
-    }
-
-    return recipients.map((recipient, index) => {
-      return <Text key={index}>{recipient}</Text>;
-    });
   };
 
   return (
-    <View style={styles.container}>
-      <TextInput value={subject} onChangeText={setSubject} placeholder="Subject" />
-      <TextInput value={body} onChangeText={setBody} placeholder="Body" />
-      <TextInput value={email} onChangeText={setEmail} placeholder="Email" />
-      <Button title='Add Recipient' onPress={addRecipient} />
-      {showRecipients()}
-      {isAvailable ? <Button title='Send Mail' onPress={sendMail} /> : <Text>Email not available</Text>}
-      <StatusBar style="auto" />
+    <View>
+      <TextInput
+        inputMode="email"
+        keyboardType="email-address"
+        textContentType="emailAddress"
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+      />
+      <TextInput
+        inputMode="text"
+        placeholder="Name"
+        value={name}
+        onChangeText={setName}
+      />
+      <Button title="Submit" onPress={onSubmit} />
     </View>
   );
-}
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default ReportScreen;
