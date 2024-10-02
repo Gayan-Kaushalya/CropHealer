@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "510253306683",
+    "project_id": "plant-3bc89",
+    "storage_bucket": "plant-3bc89.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:510253306683:android:421eb0969b570e0f7f5d1e",
+        "android_client_info": {
+          "package_name": "com.galaxies.firebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-cre0-IuAH8akvpwb7ahcWjMNhGRGDgM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
