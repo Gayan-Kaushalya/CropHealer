@@ -12,7 +12,7 @@ const firebaseConfig = {
   storageBucket: "crophealer-d57a5.appspot.com",
   messagingSenderId: "161984045182",
   appId: "1:161984045182:web:8e9840a2b57a3b91e7b82f",
-  //measurementId: "G-JX5BJRWKH0"
+  measurementId: "G-JX5BJRWKH0"
 };
 
 // Initialize Firebase
