@@ -9,6 +9,7 @@ import DiseaseDetailsScreen from "../screens/DiseaseDetailsScreen";
 import PredictScreen from "../screens/PredictScreen";
 import FeedbackForm from "../screens/Report";
 import ReportScreen from "../screens/ReportScreen";
+import LoginScreen from "../screens/LoginScreen";
 
 const Stack = createNativeStackNavigator();  
 
@@ -17,6 +18,7 @@ const AppNavigator = () => {
         <NavigationContainer>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
             {/*    <Stack.Screen name="Welcome" component={WelcomeScreen} /> */}
+                <Stack.Screen name="Login" component={LoginScreen} />
                 <Stack.Screen name="Welcome" component={WelcomeScreen} />
                {/**/}
                 <Stack.Screen name="Predict" component={PredictScreen} />
