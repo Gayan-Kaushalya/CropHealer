@@ -22,8 +22,12 @@ app.add_middleware(
 )
 
 #plant_model_path = "models/plantNew.h5"
+#CLASS_NAMES = ["Tea", "Grapes", "Bean", "Eggplant", "Pepper", "Corn", "Rice", "Potato", "Apple", "Tomato"]
 
 plant_model_path = "models/plantModel.h5"
+CLASS_NAMES = ["Pepper","Potato", "Tomato"]
+
+
 tomato_model_path = "models/tomatoModel.h5"
 pepper_model_path = "models/pepperModel.h5"
 potato_model_path = "models/potatoModel.h5"
@@ -34,10 +38,7 @@ if os.path.exists(plant_model_path):
 else:
     raise FileNotFoundError(f"Model file not found at path: {plant_model_path}")
 
-#CLASS_NAMES = ["Tea", "Grapes", "Bean", "Eggplant", "Pepper", "Corn", "Rice", "Potato", "Apple", "Tomato"]
 
-
-CLASS_NAMES = ["Pepper","Potato", "Tomato"]
 POTATO_CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
 TOMATO_CLASS_NAMES = ['Bacterial Spot',
  'Early Blight',
@@ -49,7 +50,7 @@ TOMATO_CLASS_NAMES = ['Bacterial Spot',
  'Tomato Yellow Leaf Curl Virus',
  'Tomato Mosaic Virus',
  'Healthy']
-PEPPER_CLASS_NAMES = ['Bacterial_spot', 'Healthy']
+PEPPER_CLASS_NAMES = ['Bacterial Spot', 'Healthy']
 TEA_CLASS_NAMES = ['Anthracnose', 'Algal Leaf', 'Bird Eye Spot', 'Brown Blight', 'Gray Light', 'Healthy', 'Red Leaf Spot', 'White Spot']
 
 
@@ -74,7 +75,11 @@ async def predict(image_data:ImageData):
     image_bytes_io = BytesIO(image_data_bytes)
     image = Image.open(image_bytes_io)
     image = read_file_as_image(image_data_bytes)
-    img_batch = np.expand_dims(image, 0)
+    
+    resized_image = tf.image.resize(image, (256, 256))
+
+    
+    img_batch = np.expand_dims(resized_image, 0)
     prediction = MODEL.predict(img_batch)
     
     crop = CLASS_NAMES[np.argmax(prediction[0])]
