@@ -46,7 +46,7 @@ const DiseaseDetailsScreen = ({ navigation, route }) => {
                     <Text>{disease.crops.join(", ")}</Text>
 
                     <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 16 }}>Symptoms:</Text>
-                    {disease.symptoms.split('\n').map((item, index) => (
+                    {disease.symptoms.map((item, index) => (
                         <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2 }}>
                             <Text style={{ marginRight: 8 }}>{'\u2022'}</Text>
                             <Text style={{ flex: 1 }}>{item}</Text>
@@ -54,7 +54,7 @@ const DiseaseDetailsScreen = ({ navigation, route }) => {
                     ))}
 
                     <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 16 }}>Causes:</Text>
-                    {disease.causes.split('\n').map((item, index) => (
+                    {disease.causes.map((item, index) => (
                         <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2 }}>
                             <Text style={{ marginRight: 8 }}>{'\u2022'}</Text>
                             <Text style={{ flex: 1 }}>{item}</Text>
@@ -62,7 +62,7 @@ const DiseaseDetailsScreen = ({ navigation, route }) => {
                     ))}
 
                     <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 16 }}>Cures:</Text>
-                    {disease.cures.split('\n').map((item, index) => (
+                    {disease.cures.map((item, index) => (
                         <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2 }}>
                             <Text style={{ marginRight: 8 }}>{'\u2022'}</Text>
                             <Text style={{ flex: 1 }}>{item}</Text>
