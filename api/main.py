@@ -107,7 +107,7 @@ async def predict(image_data: ImageData):
     return {"crop": crop, "class": "Unknown", "confidence": "0%"}
 
 @app.post("/explain")
-async def explain(image_data: ImageData):
+def explain(image_data: ImageData):     # I removed the word async from this line. If there is an error, add it back.
     # Decode the base64 image
     image_data_bytes = base64.b64decode(image_data.base64)
     image_bytes_io = BytesIO(image_data_bytes)
