@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, Image, Alert, SafeAreaView, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Button, Image, Alert, SafeAreaView, Pressable, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import axios from 'axios';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { useNavigation } from '@react-navigation/native';
@@ -81,8 +81,9 @@ const PredictScreen = () => {
     }
   };
 
+
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <SafeAreaView style={{ flexDirection: "row", marginHorizontal: 16, marginTop: 12 }}>
         <Pressable style={{ flex: 1 }} onPress={() => navigation.goBack()}>
           <FontAwesome name={"arrow-circle-left"} size={28} color="black" />
@@ -122,18 +123,18 @@ const PredictScreen = () => {
 
       <TouchableOpacity
         onPress={() => navigation.navigate("FeedbackForm")}
-        style={{ backgroundColor: "#f96163", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" }}>
+        style={{ backgroundColor: "#f96163", padding: 10, borderRadius: 5, width: "80%", alignItems: "center", marginBottom: 20 }}>
         <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
           Report Prediction
         </Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,

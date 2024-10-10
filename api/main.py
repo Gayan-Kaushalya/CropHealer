@@ -111,11 +111,11 @@ async def explain(image_data: ImageData):
     # Decode the base64 image
     image_data_bytes = base64.b64decode(image_data.base64)
     image_bytes_io = BytesIO(image_data_bytes)
-    image = Image.open(image_bytes_io)
-    image = read_file_as_image(image_data_bytes)
+    original_image = Image.open(image_bytes_io)
+    original_image_np = np.array(original_image)
 
     # Resize the image for prediction
-    resized_image = tf.image.resize(image, (256, 256))
+    resized_image = tf.image.resize(original_image_np, (256, 256))
     img_batch = np.expand_dims(resized_image, 0)
 
     # Get prediction
@@ -127,7 +127,7 @@ async def explain(image_data: ImageData):
 
     # Generate explanations
     explanation = explainer.explain_instance(
-        image.astype('double'),
+        original_image_np.astype('double'),
         MODEL.predict,
         top_labels=3,
         hide_color=0,
@@ -139,14 +139,18 @@ async def explain(image_data: ImageData):
         np.argmax(prediction[0]), 
         positive_only=True, 
         num_features=10, 
-        hide_rest=True
+        hide_rest=False  # Show the rest of the image but highlight the features
     )
 
-    # Prepare the image with mask
-    explained_image = mark_boundaries(temp, mask)
+    # Convert the original image to grayscale to emphasize the explanation
+    grayscale_image = np.dot(original_image_np[..., :3], [0.2989, 0.587, 0.114])  # Convert to grayscale
+    grayscale_image_rgb = np.stack([grayscale_image] * 3, axis=-1)  # Convert back to RGB format
+
+    # Overlay the Lime explanation on the grayscaled image
+    explained_image = mark_boundaries(grayscale_image_rgb, mask)
 
     # Convert the explained image to base64 for sending back
-    pil_image = Image.fromarray((explained_image * 255).astype(np.uint8))
+    pil_image = Image.fromarray((explained_image * 255).astype(np.uint8))  # Multiply by 255 to get correct pixel values
     buffered = BytesIO()
     pil_image.save(buffered, format="PNG")
     explained_image_base64 = base64.b64encode(buffered.getvalue()).decode()
@@ -156,6 +160,8 @@ async def explain(image_data: ImageData):
         "explanation": explained_image_base64,
         "confidence": str(round(float(np.max(prediction[0])) * 100, 2)) + "%"
     }
+
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8001)
