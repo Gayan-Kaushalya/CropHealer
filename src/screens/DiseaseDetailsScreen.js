@@ -1,17 +1,20 @@
 import { StyleSheet, Text, View, Image, SafeAreaView, Pressable, ScrollView } from "react-native";
 import React from "react";
 import { FontAwesome } from "@expo/vector-icons";
-import BackButton from "../components/BackButton";
 
-const DiseaseDetailsScreen = ({ route }) => {
+const DiseaseDetailsScreen = ({ navigation, route }) => {
     const { disease } = route.params || {};
 
-    //console.log("Route Params:", route.params);
-    //console.log("Disease:", disease);
+   // console.log("Route Params:", route.params);
+   // console.log("Disease:", disease);
 
     return (
         <ScrollView style={{ backgroundColor: disease.color, flex: 1 }} showsVerticalScrollIndicator={false}>
-            <BackButton/>
+            <SafeAreaView style={{ flexDirection: "row", marginHorizontal: 16 , marginTop: 12}}>
+                <Pressable style={{ flex: 1 }} onPress={() => navigation.goBack()}>
+                    <FontAwesome name={"arrow-circle-left"} size={28} color="black" />
+                </Pressable>
+            </SafeAreaView>
             <View
                 style={{
                     backgroundColor: "#fff",
@@ -38,7 +41,7 @@ const DiseaseDetailsScreen = ({ route }) => {
                 <Text style={{ marginHorizontal: 16, textAlign: "center", marginTop: 16 }}>{disease.description}</Text>
 
                 {/* Extra Details */}
-                <View style={{ alignSelf: "flex-start", marginHorizontal: 22, marginBottom: 16, width: '100%' }}>
+                <View style={{ alignSelf: "flex-start", marginHorizontal: 22, marginBottom: 16, width: '100%', paddingRight: 16 }}>
                     <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 16 }}>Crops:</Text>
                     <Text style={{ marginLeft: 16 }}>{disease.crops.join(", ")}</Text>
 
