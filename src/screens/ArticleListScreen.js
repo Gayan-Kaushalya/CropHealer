@@ -3,6 +3,7 @@ import { View } from "react-native";
 import DiseaseCard from "../components/DiseaseCard";
 import SearchFilter from "../components/SearchFilter";
 import { diseaseList } from "../Diseases";
+import BackButton from "../components/BackButton";
 
 const data = diseaseList;
 
@@ -18,6 +19,7 @@ const ArticleListScreen = () => {
 
   return (
     <View style={{ flex: 1, padding: 16 }}>
+      <BackButton />
       <SearchFilter
         icon="search"
         placeholder="Search..."

@@ -1,8 +1,9 @@
 import { StyleSheet, Text, View, Image, SafeAreaView, Pressable, ScrollView } from "react-native";
 import React from "react";
 import { FontAwesome } from "@expo/vector-icons";
+import BackButton from "../components/BackButton";
 
-const DiseaseDetailsScreen = ({ navigation, route }) => {
+const DiseaseDetailsScreen = ({ route }) => {
     const { disease } = route.params || {};
 
     //console.log("Route Params:", route.params);
@@ -10,11 +11,7 @@ const DiseaseDetailsScreen = ({ navigation, route }) => {
 
     return (
         <ScrollView style={{ backgroundColor: disease.color, flex: 1 }} showsVerticalScrollIndicator={false}>
-            <SafeAreaView style={{ flexDirection: "row", marginHorizontal: 16 , marginTop: 12}}>
-                <Pressable style={{ flex: 1 }} onPress={() => navigation.goBack()}>
-                    <FontAwesome name={"arrow-circle-left"} size={28} color="black" />
-                </Pressable>
-            </SafeAreaView>
+            <BackButton/>
             <View
                 style={{
                     backgroundColor: "#fff",
