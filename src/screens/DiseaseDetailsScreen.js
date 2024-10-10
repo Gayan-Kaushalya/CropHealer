@@ -5,8 +5,8 @@ import { FontAwesome } from "@expo/vector-icons";
 const DiseaseDetailsScreen = ({ navigation, route }) => {
     const { disease } = route.params || {};
 
-    console.log("Route Params:", route.params);
-    console.log("Disease:", disease);
+    //console.log("Route Params:", route.params);
+    //console.log("Disease:", disease);
 
     return (
         <ScrollView style={{ backgroundColor: disease.color, flex: 1 }} showsVerticalScrollIndicator={false}>
@@ -41,13 +41,13 @@ const DiseaseDetailsScreen = ({ navigation, route }) => {
                 <Text style={{ marginHorizontal: 16, textAlign: "center", marginTop: 16 }}>{disease.description}</Text>
 
                 {/* Extra Details */}
-                <View style={{ alignSelf: "flex-start", marginHorizontal: 22, marginBottom: 16}}>
+                <View style={{ alignSelf: "flex-start", marginHorizontal: 22, marginBottom: 16, width: '100%' }}>
                     <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 16 }}>Crops:</Text>
-                    <Text>{disease.crops.join(", ")}</Text>
+                    <Text style={{ marginLeft: 16 }}>{disease.crops.join(", ")}</Text>
 
                     <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 16 }}>Symptoms:</Text>
                     {disease.symptoms.map((item, index) => (
-                        <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2 }}>
+                        <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2, marginLeft: 16 }}>
                             <Text style={{ marginRight: 8 }}>{'\u2022'}</Text>
                             <Text style={{ flex: 1 }}>{item}</Text>
                         </View>
@@ -55,7 +55,7 @@ const DiseaseDetailsScreen = ({ navigation, route }) => {
 
                     <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 16 }}>Causes:</Text>
                     {disease.causes.map((item, index) => (
-                        <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2 }}>
+                        <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2, marginLeft: 16 }}>
                             <Text style={{ marginRight: 8 }}>{'\u2022'}</Text>
                             <Text style={{ flex: 1 }}>{item}</Text>
                         </View>
@@ -63,7 +63,7 @@ const DiseaseDetailsScreen = ({ navigation, route }) => {
 
                     <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 16 }}>Cures:</Text>
                     {disease.cures.map((item, index) => (
-                        <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2 }}>
+                        <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2, marginLeft: 16 }}>
                             <Text style={{ marginRight: 8 }}>{'\u2022'}</Text>
                             <Text style={{ flex: 1 }}>{item}</Text>
                         </View>
@@ -71,7 +71,7 @@ const DiseaseDetailsScreen = ({ navigation, route }) => {
 
                     <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 16 }}>Preventive Measures:</Text>
                     {disease.preventive_measures.map((item, index) => (
-                        <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2 }}>
+                        <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2, marginLeft: 16 }}>
                             <Text style={{ marginRight: 8 }}>{'\u2022'}</Text>
                             <Text style={{ flex: 1 }}>{item}</Text>
                         </View>
