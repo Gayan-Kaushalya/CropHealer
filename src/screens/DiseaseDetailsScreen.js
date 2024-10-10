@@ -14,7 +14,6 @@ const DiseaseDetailsScreen = ({ navigation, route }) => {
                 <Pressable style={{ flex: 1 }} onPress={() => navigation.goBack()}>
                     <FontAwesome name={"arrow-circle-left"} size={28} color="black" />
                 </Pressable>
-                {/*<FontAwesome name={"heart-o"} size={28} color="black" />*/}
             </SafeAreaView>
             <View
                 style={{
@@ -45,11 +44,38 @@ const DiseaseDetailsScreen = ({ navigation, route }) => {
                 <View style={{ alignSelf: "flex-start", marginHorizontal: 22, marginBottom: 16}}>
                     <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 16 }}>Crops:</Text>
                     <Text>{disease.crops.join(", ")}</Text>
-                    <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 16 }}>Preventive Measures:</Text>
-                    {disease.preventive_measures.map((item, index) => (
-                        <Text key={index}>{index + 1}. {item}</Text>
+
+                    <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 16 }}>Symptoms:</Text>
+                    {disease.symptoms.split('\n').map((item, index) => (
+                        <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2 }}>
+                            <Text style={{ marginRight: 8 }}>{'\u2022'}</Text>
+                            <Text style={{ flex: 1 }}>{item}</Text>
+                        </View>
                     ))}
 
+                    <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 16 }}>Causes:</Text>
+                    {disease.causes.split('\n').map((item, index) => (
+                        <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2 }}>
+                            <Text style={{ marginRight: 8 }}>{'\u2022'}</Text>
+                            <Text style={{ flex: 1 }}>{item}</Text>
+                        </View>
+                    ))}
+
+                    <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 16 }}>Cures:</Text>
+                    {disease.cures.split('\n').map((item, index) => (
+                        <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2 }}>
+                            <Text style={{ marginRight: 8 }}>{'\u2022'}</Text>
+                            <Text style={{ flex: 1 }}>{item}</Text>
+                        </View>
+                    ))}
+
+                    <Text style={{ fontSize: 18, fontWeight: "bold", marginTop: 16 }}>Preventive Measures:</Text>
+                    {disease.preventive_measures.map((item, index) => (
+                        <View key={index} style={{ flexDirection: 'row', alignItems: 'flex-start', marginVertical: 2 }}>
+                            <Text style={{ marginRight: 8 }}>{'\u2022'}</Text>
+                            <Text style={{ flex: 1 }}>{item}</Text>
+                        </View>
+                    ))}
                 </View>
             </View>
         </ScrollView>
