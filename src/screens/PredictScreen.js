@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, Image, PermissionsAndroid, StyleSheet, TouchableOpacity, Alert, SafeAreaView, Pressable } from 'react-native';
+import { View, Text, Button, Image, Alert, SafeAreaView, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
 import axios from 'axios';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import { launchImageLibrary } from 'react-native-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons'; // Make sure you have expo-vector-icons installed
 import * as ImagePicker from 'expo-image-picker';
-import { cos } from '@tensorflow/tfjs';
-
 
 const PredictScreen = () => {
   const navigation = useNavigation();
   const [file, setFile] = useState(null);
-  const [message, setMessage] = useState('');
-  const [image, setImage] = useState('');
   const [error, setError] = useState(null);
   const [plantType, setPlantType] = useState('');
   const [disease, setDisease] = useState('');
   const [confidence, setConfidence] = useState('');
+  const [explanationImage, setExplanationImage] = useState('');
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -38,25 +35,36 @@ const PredictScreen = () => {
         const uri = result.assets[0].uri;
         setFile(uri);
 
-        const formData = new FormData();
-        formData.append('file', {
-          uri: uri,
-          name: 'Image.jpg',
-          type: 'image/jpeg',
-        });
+        // Read the image as base64
+        const base64 = await fetch(uri)
+          .then(response => response.blob())
+          .then(blob => {
+            return new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onloadend = () => resolve(reader.result);
+              reader.readAsDataURL(blob);
+            });
+          });
+
+        // Remove the data URL prefix (e.g., "data:image/jpeg;base64,")
+        const base64Data = base64.split(',')[1];
 
         try {
-          console.log(result.assets[0].base64)
-        const response = await axios.post('http://localhost:8001/predict', {base64:result.assets[0].uri.split(",")[1]});
-
-        // Handle the response from the server
-        console.log('Response from server: ', response.data);
-        setMessage(response.data.message);
-
+          // First call the predict endpoint
+          const response = await axios.post('http://localhost:8001/predict', { base64: base64Data });
+          console.log('Response from server: ', response.data);
+          
           const { crop, class: diseaseClass, confidence: conf } = response.data;
           setPlantType(crop);
           setDisease(diseaseClass);
           setConfidence(conf);
+
+          // Now call the explain endpoint
+          const explainResponse = await axios.post('http://localhost:8001/explain', { base64: base64Data });
+          console.log('Explanation from server: ', explainResponse.data);
+          
+          setExplanationImage(`data:image/png;base64,${explainResponse.data.explanation}`);
+
         } catch (error) {
           if (error.response) {
             console.error('Server Error: ', error.response.data);
@@ -75,13 +83,12 @@ const PredictScreen = () => {
 
   return (
     <View style={styles.container}>
-        <SafeAreaView style={{ flexDirection: "row", marginHorizontal: 16 , marginTop: 12}}>
-            <Pressable style={{ flex: 1 }} onPress={() => navigation.goBack()}>
-                <FontAwesome name={"arrow-circle-left"} size={28} color="black" />
-            </Pressable>
-            {/*<FontAwesome name={"heart-o"} size={28} color="black" />*/}
-        </SafeAreaView>
-      
+      <SafeAreaView style={{ flexDirection: "row", marginHorizontal: 16, marginTop: 12 }}>
+        <Pressable style={{ flex: 1 }} onPress={() => navigation.goBack()}>
+          <FontAwesome name={"arrow-circle-left"} size={28} color="black" />
+        </Pressable>
+      </SafeAreaView>
+
       <TouchableOpacity onPress={pickImage} style={styles.button}>
         <Text style={styles.buttonText}>Pick an Image</Text>
       </TouchableOpacity>
@@ -106,12 +113,19 @@ const PredictScreen = () => {
         </View>
       </View>
 
+      {explanationImage ? (
+        <View style={styles.imageContainer}>
+          <Text style={styles.infoText}>Explanation:</Text>
+          <Image source={{ uri: explanationImage }} style={styles.explanationImage} />
+        </View>
+      ) : null}
+
       <TouchableOpacity
         onPress={() => navigation.navigate("FeedbackForm")}
-                style={{ backgroundColor: "#f96163", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" }}>
-                <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
-                    Report Prediction
-                </Text>
+        style={{ backgroundColor: "#f96163", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" }}>
+        <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
+          Report Prediction
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -143,6 +157,11 @@ const styles = StyleSheet.create({
   image: {
     width: 200,
     height: 200,
+  },
+  explanationImage: {
+    width: 200,
+    height: 200,
+    marginTop: 10,
   },
   errorText: {
     color: 'red',

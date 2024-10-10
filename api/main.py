@@ -10,6 +10,8 @@ from tensorflow import keras
 import os
 import base64
 from pydantic import BaseModel
+from lime import lime_image
+from skimage.segmentation import mark_boundaries
 
 app = FastAPI()
 
@@ -21,13 +23,11 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-#plant_model_path = "models/plantNew.h5"
-#CLASS_NAMES = ["Tea", "Grapes", "Bean", "Eggplant", "Pepper", "Corn", "Rice", "Potato", "Apple", "Tomato"]
-
+# Load your models here
 plant_model_path = "models/plantModel.h5"
-CLASS_NAMES = ["Pepper","Potato", "Tomato"]
+CLASS_NAMES = ["Pepper", "Potato", "Tomato"]
 
-
+# Load additional models
 tomato_model_path = "models/tomatoModel.h5"
 pepper_model_path = "models/pepperModel.h5"
 potato_model_path = "models/potatoModel.h5"
@@ -38,88 +38,124 @@ if os.path.exists(plant_model_path):
 else:
     raise FileNotFoundError(f"Model file not found at path: {plant_model_path}")
 
-
+# Define your specific class names for detailed predictions
 POTATO_CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
-TOMATO_CLASS_NAMES = ['Bacterial Spot',
- 'Early Blight',
- 'Late Blight',
- 'Leaf Mold',
- 'Septoria Leaf Spot',
- 'Two-spotted Spider Mite',
- 'Target Spot',
- 'Tomato Yellow Leaf Curl Virus',
- 'Tomato Mosaic Virus',
- 'Healthy']
+TOMATO_CLASS_NAMES = ['Bacterial Spot', 'Early Blight', 'Late Blight', 'Leaf Mold',
+                      'Septoria Leaf Spot', 'Two-spotted Spider Mite', 
+                      'Target Spot', 'Tomato Yellow Leaf Curl Virus', 
+                      'Tomato Mosaic Virus', 'Healthy']
 PEPPER_CLASS_NAMES = ['Bacterial Spot', 'Healthy']
-TEA_CLASS_NAMES = ['Anthracnose', 'Algal Leaf', 'Bird Eye Spot', 'Brown Blight', 'Gray Light', 'Healthy', 'Red Leaf Spot', 'White Spot']
-
+TEA_CLASS_NAMES = ['Anthracnose', 'Algal Leaf', 'Bird Eye Spot', 
+                   'Brown Blight', 'Gray Light', 'Healthy', 
+                   'Red Leaf Spot', 'White Spot']
 
 @app.get("/ping")
 async def ping():
     return "pong"
 
-
 def read_file_as_image(file) -> np.ndarray:
-    #print(file)
     image = np.array(Image.open(BytesIO(file)))
     return image
-
 
 class ImageData(BaseModel):
     base64: str
 
 @app.post("/predict")
-async def predict(image_data:ImageData):
-    #print(image_data.base64)
+async def predict(image_data: ImageData):
+    # Decode the base64 image
     image_data_bytes = base64.b64decode(image_data.base64)
     image_bytes_io = BytesIO(image_data_bytes)
     image = Image.open(image_bytes_io)
     image = read_file_as_image(image_data_bytes)
-    
-    resized_image = tf.image.resize(image, (256, 256))
 
-    
+    # Resize and prepare the image for prediction
+    resized_image = tf.image.resize(image, (256, 256))
     img_batch = np.expand_dims(resized_image, 0)
+
+    # Get the initial crop prediction
     prediction = MODEL.predict(img_batch)
-    
     crop = CLASS_NAMES[np.argmax(prediction[0])]
-    
+
+    # Load specific model for further classification
     if crop == "Potato":
         next_model = tf.keras.models.load_model(potato_model_path)
         prediction = next_model.predict(img_batch)
-        return {"crop": crop, "class": POTATO_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
-    
+        return {
+            "crop": crop, 
+            "class": POTATO_CLASS_NAMES[np.argmax(prediction[0])], 
+            "confidence": str(round(float(np.max(prediction[0])) * 100, 2)) + "%"
+        }
+
     if crop == "Tomato":
         next_model = tf.keras.models.load_model(tomato_model_path)
         prediction = next_model.predict(img_batch)
-        return {"crop": crop, "class": TOMATO_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
-    
+        return {
+            "crop": crop, 
+            "class": TOMATO_CLASS_NAMES[np.argmax(prediction[0])], 
+            "confidence": str(round(float(np.max(prediction[0])) * 100, 2)) + "%"
+        }
+
     if crop == "Pepper":
         next_model = tf.keras.models.load_model(pepper_model_path)
         prediction = next_model.predict(img_batch)
-        return {"crop": crop, "class": PEPPER_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
-    
-    if crop == "Tea":
-        return {"crop": crop, "class": "Tea", "confidence": "100%"}
-    
-    if crop == "Grapes":
-        return {"crop": crop, "class": "Grapes", "confidence": "100%"}
-    
-    if crop == "Bean":
-        return {"crop": crop, "class": "Bean", "confidence": "100%"}
-    
-    if crop == "Eggplant":
-        return {"crop": crop, "class": "Eggplant", "confidence": "100%"}
-    
-    if crop == "Corn":
-        return {"crop": crop, "class": "Corn", "confidence": "100%"}
-    
-    if crop == "Rice":
-        return {"crop": crop, "class": "Rice", "confidence": "100%"}
-    
-    if crop == "Apple":
-        return {"crop": crop, "class": "Apple", "confidence": "100%"}
-    
+        return {
+            "crop": crop, 
+            "class": PEPPER_CLASS_NAMES[np.argmax(prediction[0])], 
+            "confidence": str(round(float(np.max(prediction[0])) * 100, 2)) + "%"
+        }
+
+    return {"crop": crop, "class": "Unknown", "confidence": "0%"}
+
+@app.post("/explain")
+async def explain(image_data: ImageData):
+    # Decode the base64 image
+    image_data_bytes = base64.b64decode(image_data.base64)
+    image_bytes_io = BytesIO(image_data_bytes)
+    image = Image.open(image_bytes_io)
+    image = read_file_as_image(image_data_bytes)
+
+    # Resize the image for prediction
+    resized_image = tf.image.resize(image, (256, 256))
+    img_batch = np.expand_dims(resized_image, 0)
+
+    # Get prediction
+    prediction = MODEL.predict(img_batch)
+    crop = CLASS_NAMES[np.argmax(prediction[0])]
+
+    # Use Lime for explanations
+    explainer = lime_image.LimeImageExplainer()
+
+    # Generate explanations
+    explanation = explainer.explain_instance(
+        image.astype('double'),
+        MODEL.predict,
+        top_labels=3,
+        hide_color=0,
+        num_samples=1000
+    )
+
+    # Get the explanation for the predicted label
+    temp, mask = explanation.get_image_and_mask(
+        np.argmax(prediction[0]), 
+        positive_only=True, 
+        num_features=10, 
+        hide_rest=True
+    )
+
+    # Prepare the image with mask
+    explained_image = mark_boundaries(temp, mask)
+
+    # Convert the explained image to base64 for sending back
+    pil_image = Image.fromarray((explained_image * 255).astype(np.uint8))
+    buffered = BytesIO()
+    pil_image.save(buffered, format="PNG")
+    explained_image_base64 = base64.b64encode(buffered.getvalue()).decode()
+
+    return {
+        "crop": crop,
+        "explanation": explained_image_base64,
+        "confidence": str(round(float(np.max(prediction[0])) * 100, 2)) + "%"
+    }
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8001)
