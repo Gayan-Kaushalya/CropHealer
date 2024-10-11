@@ -1,12 +1,10 @@
-from fastapi import FastAPI, File, UploadFile, Body
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 import uvicorn
 import numpy as np
 from io import BytesIO
 from PIL import Image
 import tensorflow as tf
-from tensorflow import keras
 import os
 import base64
 from pydantic import BaseModel
@@ -21,8 +19,9 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-plant_model_path = "models/plantNew.h5"
-CLASS_NAMES = ['Apple', 'Bean', 'Corn', 'Eggplant', 'Grapes', 'Pepper', 'Potato', 'Rice', 'Tea', 'Tomato']
+plant_model_path = "models/plantType.h5"      # You may hacve to change this time to time to plantNew (10 classes) and plantType (13 classes)
+CLASS_NAMES = ['Apple', 'Banana', 'Bean', 'Coffee', 'Corn', 'Eggplant', 'Grapes', 'Pepper', 'Potato', 'Rice', 'Sugarcane', 'Tea', 'Tomato'] # 13 classes
+# CLASS_NAMES = ['Apple', 'Bean', 'Corn', 'Eggplant', 'Grapes', 'Pepper', 'Potato', 'Rice', 'Tea', 'Tomato']  # 10 classes
 
 #plant_model_path = "models/plantModel.h5"
 #CLASS_NAMES = ["Pepper","Potato", "Tomato"]
@@ -31,7 +30,16 @@ CLASS_NAMES = ['Apple', 'Bean', 'Corn', 'Eggplant', 'Grapes', 'Pepper', 'Potato'
 tomato_model_path = "models/tomatoModel.h5"
 pepper_model_path = "models/pepperModel.h5"
 potato_model_path = "models/potatoModel.h5"
-tea_model_path = "models/teaModel.h5"
+tea_model_path = "models/teaModel.h5"               ################################
+apple_model_path = "models/appleModel.h5"
+bean_model_path = "models/beanModel.h5"
+banana_model_path = "models/bananaModel.h5"
+corn_model_path = "models/cornModel.h5"
+coffee_model_path = "models/coffeeModel.h5"
+eggplant_model_path = "models/eggplantModel.h5"
+grapes_model_path = "models/grapeModel.h5"            ###################################
+sugarcane_model_path = "models/sugarcaneModel.h5"
+rice_model_path = "models/riceModel.h5"
 
 if os.path.exists(plant_model_path):
     MODEL = tf.keras.models.load_model(plant_model_path)
@@ -52,6 +60,8 @@ TOMATO_CLASS_NAMES = ['Bacterial Spot',
  'Healthy']
 PEPPER_CLASS_NAMES = ['Bacterial Spot', 'Healthy']
 TEA_CLASS_NAMES = ['Anthracnose', 'Algal Leaf', 'Bird Eye Spot', 'Brown Blight', 'Gray Light', 'Healthy', 'Red Leaf Spot', 'White Spot']
+GRAPE_CLASS_NAMES = ['Black Measles', 'Black Rot', 'Healthy', 'Phoma Blight']
+APPLE_CLASS_NAMES = ['Apple Scab', 'Black Rot', 'Cedar Apple Rust', 'Healthy']
 
 
 @app.get("/ping")
@@ -100,10 +110,14 @@ async def predict(image_data:ImageData):
         return {"crop": crop, "class": PEPPER_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
     
     if crop == "Tea":
-        return {"crop": crop, "class": "Tea", "confidence": "100%"}
+        next_model = tf.keras.models.load_model(tea_model_path)
+        prediction = next_model.predict(img_batch)
+        return {"crop": crop, "class": TEA_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
     
     if crop == "Grapes":
-        return {"crop": crop, "class": "Grapes", "confidence": "100%"}
+        next_model = tf.keras.models.load_model(grapes_model_path)
+        prediction = next_model.predict(img_batch)
+        return {"crop": crop, "class": GRAPE_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
     
     if crop == "Bean":
         return {"crop": crop, "class": "Bean", "confidence": "100%"}
@@ -118,7 +132,9 @@ async def predict(image_data:ImageData):
         return {"crop": crop, "class": "Rice", "confidence": "100%"}
     
     if crop == "Apple":
-        return {"crop": crop, "class": "Apple", "confidence": "100%"}
+        next_model = tf.keras.models.load_model(apple_model_path)
+        prediction = next_model.predict(img_batch)
+        return {"crop": crop, "class": APPLE_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
     
 
 if __name__ == "__main__":
