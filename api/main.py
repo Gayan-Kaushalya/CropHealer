@@ -21,11 +21,11 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-#plant_model_path = "models/plantNew.h5"
-#CLASS_NAMES = ["Tea", "Grapes", "Bean", "Eggplant", "Pepper", "Corn", "Rice", "Potato", "Apple", "Tomato"]
+plant_model_path = "models/plantNew.h5"
+CLASS_NAMES = ['Apple', 'Bean', 'Corn', 'Eggplant', 'Grapes', 'Pepper', 'Potato', 'Rice', 'Tea', 'Tomato']
 
-plant_model_path = "models/plantModel.h5"
-CLASS_NAMES = ["Pepper","Potato", "Tomato"]
+#plant_model_path = "models/plantModel.h5"
+#CLASS_NAMES = ["Pepper","Potato", "Tomato"]
 
 
 tomato_model_path = "models/tomatoModel.h5"

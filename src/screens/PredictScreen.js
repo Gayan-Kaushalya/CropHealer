@@ -5,8 +5,8 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons'; // Make sure you have expo-vector-icons installed
 import * as ImagePicker from 'expo-image-picker';
+import { diseaseList } from '../Diseases';
 import { cos } from '@tensorflow/tfjs';
-
 
 const PredictScreen = () => {
   const navigation = useNavigation();
@@ -47,11 +47,11 @@ const PredictScreen = () => {
 
         try {
           console.log(result.assets[0].base64)
-        const response = await axios.post('http://localhost:8001/predict', {base64:result.assets[0].uri.split(",")[1]});
+          const response = await axios.post('http://localhost:8001/predict', {base64:result.assets[0].uri.split(",")[1]});
 
-        // Handle the response from the server
-        console.log('Response from server: ', response.data);
-        setMessage(response.data.message);
+          // Handle the response from the server
+          console.log('Response from server: ', response.data);
+          setMessage(response.data.message);
 
           const { crop, class: diseaseClass, confidence: conf } = response.data;
           setPlantType(crop);
@@ -73,14 +73,15 @@ const PredictScreen = () => {
     }
   };
 
+  const diseaseDetails = disease !== "Healthy" ? diseaseList.find(detail => detail.disease === disease) : null;
+
   return (
     <View style={styles.container}>
-        <SafeAreaView style={{ flexDirection: "row", marginHorizontal: 16 , marginTop: 12}}>
-            <Pressable style={{ flex: 1 }} onPress={() => navigation.goBack()}>
-                <FontAwesome name={"arrow-circle-left"} size={28} color="black" />
-            </Pressable>
-            {/*<FontAwesome name={"heart-o"} size={28} color="black" />*/}
-        </SafeAreaView>
+      <SafeAreaView style={{ flexDirection: "row", marginHorizontal: 16 , marginTop: 12}}>
+        <Pressable style={{ flex: 1 }} onPress={() => navigation.goBack()}>
+          <FontAwesome name={"arrow-circle-left"} size={28} color="black" />
+        </Pressable>
+      </SafeAreaView>
       
       <TouchableOpacity onPress={pickImage} style={styles.button}>
         <Text style={styles.buttonText}>Pick an Image</Text>
@@ -106,12 +107,18 @@ const PredictScreen = () => {
         </View>
       </View>
 
+      {diseaseDetails && (
+        <TouchableOpacity onPress={() => navigation.navigate('DiseaseDetails', { disease: diseaseDetails })} style={styles.linkContainer}>
+          <Text style={styles.linkText}>View Details</Text>
+        </TouchableOpacity>
+      )}
+
       <TouchableOpacity
         onPress={() => navigation.navigate("FeedbackForm")}
-                style={{ backgroundColor: "#f96163", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" }}>
-                <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
-                    Report Prediction
-                </Text>
+        style={{ backgroundColor: "#f96163", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" }}>
+        <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
+          Report Prediction
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -164,6 +171,14 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  linkContainer: {
+    marginBottom: 20,
+  },
+  linkText: {
+    color: 'blue',
+    textDecorationLine: 'underline',
+    fontSize: 18,
   },
   reportButton: {
     backgroundColor: '#f96163',
