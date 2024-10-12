@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Button, Image, PermissionsAndroid, StyleSheet, TouchableOpacity, Alert, SafeAreaView, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Alert, SafeAreaView, Pressable } from 'react-native';
 import axios from 'axios';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { useNavigation } from '@react-navigation/native';
 import { FontAwesome } from '@expo/vector-icons'; // Make sure you have expo-vector-icons installed
 import * as ImagePicker from 'expo-image-picker';
 import { diseaseList } from '../Diseases';
-import { cos } from '@tensorflow/tfjs';
 
 const PredictScreen = () => {
   const navigation = useNavigation();
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState('');
-  const [image, setImage] = useState('');
   const [error, setError] = useState(null);
   const [plantType, setPlantType] = useState('');
   const [disease, setDisease] = useState('');
@@ -73,6 +70,60 @@ const PredictScreen = () => {
     }
   };
 
+  const takePicture = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (status !== "granted") {
+      Alert.alert(
+        "Permission Denied",
+        "Sorry, we need camera permission to take pictures."
+      );
+    } else {
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        const uri = result.assets[0].uri;
+        setFile(uri);
+
+        const formData = new FormData();
+        formData.append('file', {
+          uri: uri,
+          name: 'Image.jpg',
+          type: 'image/jpeg',
+        });
+
+        try {
+          console.log(result.assets[0].base64)
+          const response = await axios.post('http://localhost:8001/predict', {base64:result.assets[0].uri.split(",")[1]});
+
+          // Handle the response from the server
+          console.log('Response from server: ', response.data);
+          setMessage(response.data.message);
+
+          const { crop, class: diseaseClass, confidence: conf } = response.data;
+          setPlantType(crop);
+          setDisease(diseaseClass);
+          setConfidence(conf);
+        } catch (error) {
+          if (error.response) {
+            console.error('Server Error: ', error.response.data);
+            setError('Server Error: ' + error.response.data.message);
+          } else if (error.request) {
+            console.error('Network Error: No response received', error.request);
+            setError('Network Error: No response received');
+          } else {
+            console.error('Error: ', error.message);
+            setError('Error: ' + error.message);
+          }
+        }
+      }
+    }
+  };
+
   const diseaseDetails = disease !== "Healthy" ? diseaseList.find(detail => detail.disease === disease) : null;
 
   return (
@@ -85,6 +136,10 @@ const PredictScreen = () => {
       
       <TouchableOpacity onPress={pickImage} style={styles.button}>
         <Text style={styles.buttonText}>Pick an Image</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={takePicture} style={styles.button}>
+        <Text style={styles.buttonText}>Take a Picture</Text>
       </TouchableOpacity>
 
       {file ? (
