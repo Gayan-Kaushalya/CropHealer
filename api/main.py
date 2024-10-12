@@ -77,6 +77,7 @@ CORN_CLASS_NAMES = ['Northern Leaf Blight', 'Common Rust', 'Gray Leaf Spot', 'He
 COFFEE_CLASS_NAMES = ['Coffee Leaf Miner', 'Healthy', 'Phoma Blight', 'Rust of Coffee']
 SUGARCANE_CLASS_NAMES = ['Bacterial Blight', 'Mosaic Virus', 'Red Rot', 'Sugarcane Common Rust', 'Yellow Leaf Virus']
 RICE_CLASS_NAMES = ['Brown Spot', 'Healthy', 'Rice Hispa', 'Leaf Blast']
+EGGPLANT_CLASS_NAMES = ['Healthy', 'Bacterial Wilt', 'Cercospora Leaf Spot', 'Insect Pest Disease', 'Mosaic Virus', 'Small Leaf Disease', 'White Mold']
 
 
 @app.get("/ping")
@@ -139,7 +140,9 @@ async def predict(image_data:ImageData):
         return {"crop": crop, "class": SOYBEAN_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
     
     if crop == "Eggplant":
-        return {"crop": crop, "class": "Eggplant", "confidence": "100%"}
+        next_model = tf.keras.models.load_model(eggplant_model_path)
+        prediction = next_model.predict(img_batch)
+        return {"crop": crop, "class": EGGPLANT_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
     
     if crop == "Corn":
         next_model = tf.keras.models.load_model(corn_model_path)
