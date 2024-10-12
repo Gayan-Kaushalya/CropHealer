@@ -32,13 +32,13 @@ pepper_model_path = "models/pepperModel.h5"
 potato_model_path = "models/potatoModel.h5"
 tea_model_path = "models/teaModel.h5"               ################################
 apple_model_path = "models/appleModel.h5"
-bean_model_path = "models/beanModel.h5"
-banana_model_path = "models/bananaModel.h5"
+bean_model_path = "models/soybeanModel.h5"         ###################################
+banana_model_path = "models/banana.h5"
 corn_model_path = "models/cornModel.h5"
-coffee_model_path = "models/coffeeModel.h5"
+coffee_model_path = "models/coffee 2.h5"            ###################################
 eggplant_model_path = "models/eggplantModel.h5"
 grapes_model_path = "models/grapeModel.h5"            ###################################
-sugarcane_model_path = "models/sugarcaneModel.h5"
+sugarcane_model_path = "models/sugarcaneModel.h5"       ###################################
 rice_model_path = "models/riceModel.h5"
 
 if os.path.exists(plant_model_path):
@@ -62,6 +62,21 @@ PEPPER_CLASS_NAMES = ['Bacterial Spot', 'Healthy']
 TEA_CLASS_NAMES = ['Anthracnose', 'Algal Leaf', 'Bird Eye Spot', 'Brown Blight', 'Gray Light', 'Healthy', 'Red Leaf Spot', 'White Spot']
 GRAPE_CLASS_NAMES = ['Black Measles', 'Black Rot', 'Healthy', 'Phoma Blight']
 APPLE_CLASS_NAMES = ['Apple Scab', 'Black Rot', 'Cedar Apple Rust', 'Healthy']
+SOYBEAN_CLASS_NAMES = ['Mossaic Virus',
+ 'Southern Blight',
+ 'Sudden Death Syndrome',
+ 'Yellow Mosaic',
+ 'Bacterial Blight',
+ 'Brown Spot',
+ 'Crestamento',
+ 'Bean Rust',
+ 'Powdery Mildew',
+ 'Septoria']
+BANANA_CLASS_NAMES = ['Cordana', 'Healthy', 'Pestalotiopsis', 'Sigatoka']
+CORN_CLASS_NAMES = ['Northern Leaf Blight', 'Common Rust', 'Gray Leaf Spot', 'Healthy']
+COFFEE_CLASS_NAMES = ['Coffee Leaf Miner', 'Healthy', 'Phoma Blight', 'Rust of Coffee']
+SUGARCANE_CLASS_NAMES = ['Bacterial Blight', 'Mosaic Virus', 'Red Rot', 'Sugarcane Common Rust', 'Yellow Leaf Virus']
+RICE_CLASS_NAMES = ['Brown Spot', 'Healthy', 'Rice Hispa', 'Leaf Blast']
 
 
 @app.get("/ping")
@@ -88,7 +103,6 @@ async def predict(image_data:ImageData):
     
     resized_image = tf.image.resize(image, (256, 256))
 
-    
     img_batch = np.expand_dims(resized_image, 0)
     prediction = MODEL.predict(img_batch)
     
@@ -120,21 +134,42 @@ async def predict(image_data:ImageData):
         return {"crop": crop, "class": GRAPE_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
     
     if crop == "Bean":
-        return {"crop": crop, "class": "Bean", "confidence": "100%"}
+        next_model = tf.keras.models.load_model(bean_model_path)
+        prediction = next_model.predict(img_batch)
+        return {"crop": crop, "class": SOYBEAN_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
     
     if crop == "Eggplant":
         return {"crop": crop, "class": "Eggplant", "confidence": "100%"}
     
     if crop == "Corn":
-        return {"crop": crop, "class": "Corn", "confidence": "100%"}
+        next_model = tf.keras.models.load_model(corn_model_path)
+        prediction = next_model.predict(img_batch)
+        return {"crop": crop, "class": CORN_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
     
     if crop == "Rice":
-        return {"crop": crop, "class": "Rice", "confidence": "100%"}
+        next_model = tf.keras.models.load_model(rice_model_path)
+        prediction = next_model.predict(img_batch)
+        return {"crop": crop, "class": RICE_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
     
     if crop == "Apple":
         next_model = tf.keras.models.load_model(apple_model_path)
         prediction = next_model.predict(img_batch)
         return {"crop": crop, "class": APPLE_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
+    
+    if crop == "Banana":
+        next_model = tf.keras.models.load_model(banana_model_path)
+        prediction = next_model.predict(img_batch)
+        return {"crop": crop, "class": BANANA_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
+    
+    if crop == "Coffee":
+        next_model = tf.keras.models.load_model(coffee_model_path)
+        prediction = next_model.predict(img_batch)
+        return {"crop": crop, "class": COFFEE_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
+    
+    if crop == "Sugarcane":
+        next_model = tf.keras.models.load_model(sugarcane_model_path)
+        prediction = next_model.predict(img_batch)
+        return {"crop": crop, "class": SUGARCANE_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
     
 
 if __name__ == "__main__":
