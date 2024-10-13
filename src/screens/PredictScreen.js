@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Alert, SafeAreaView, Pressable, ScrollView, BackHandler } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Alert, SafeAreaView, Pressable, ScrollView, BackHandler, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
@@ -9,12 +9,12 @@ import BackButton from '../components/BackButton';
 const PredictScreen = () => {
   const navigation = useNavigation();
   const [file, setFile] = useState(null);
-  const [message, setMessage] = useState('');
   const [error, setError] = useState(null);
   const [plantType, setPlantType] = useState('');
   const [disease, setDisease] = useState('');
   const [confidence, setConfidence] = useState('');
   const [limeHeatmap, setLimeHeatmap] = useState(''); // Add state to store the heatmap
+  const [loading, setLoading] = useState(false); // Add state to manage loading
 
   // Pick an image from the gallery
   const pickImage = async () => {
@@ -37,6 +37,7 @@ const PredictScreen = () => {
       if (!result.canceled) {
         const base64Image = result.assets[0].base64; // Store the base64 string
         setFile(result.assets[0].uri); // Store URI for display
+        setLoading(true); // Start loading
 
         try {
           // Sending the base64 image to the backend
@@ -55,6 +56,8 @@ const PredictScreen = () => {
 
         } catch (error) {
           handleError(error);
+        } finally {
+          setLoading(false); // Stop loading
         }
       }
     }
@@ -80,6 +83,7 @@ const PredictScreen = () => {
       if (!result.canceled) {
         const base64Image = result.assets[0].base64; // Store the base64 string
         setFile(result.assets[0].uri); // Store URI for display
+        setLoading(true); // Start loading
 
         try {
           // Sending the base64 image to the backend
@@ -98,6 +102,8 @@ const PredictScreen = () => {
 
         } catch (error) {
           handleError(error);
+        } finally {
+          setLoading(false); // Stop loading
         }
       }
     }
@@ -133,36 +139,46 @@ const PredictScreen = () => {
       </TouchableOpacity>
 
       {/* Display uploaded/taken image */}
-      {file ? (
+      {file && (
         <View style={styles.imageContainer}>
           <Image source={{ uri: file }} style={styles.image} />
         </View>
-      ) : (
+      )}
+
+      {/* Display loading indicator */}
+      {loading && (
+        <ActivityIndicator size="large" color="#0000ff" />
+      )}
+
+      {/* Display error message */}
+      {!file && error && (
         <Text style={styles.errorText}>{error}</Text>
       )}
 
       {/* Display plant type, disease, and confidence */}
-      <View style={styles.infoContainer}>
-        <View style={styles.infoBox}>
-          <Text style={styles.infoText}>Plant Type: {plantType}</Text>
+      {!loading && file && (
+        <View style={styles.infoContainer}>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>Plant Type: {plantType}</Text>
+          </View>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>Disease: {disease}</Text>
+          </View>
+          <View style={styles.infoBox}>
+            <Text style={styles.infoText}>Confidence: {confidence}</Text>
+          </View>
         </View>
-        <View style={styles.infoBox}>
-          <Text style={styles.infoText}>Disease: {disease}</Text>
-        </View>
-        <View style={styles.infoBox}>
-          <Text style={styles.infoText}>Confidence: {confidence}</Text>
-        </View>
-      </View>
+      )}
 
       {/* Display link to view details */}
-      {diseaseDetails && (
+      {!loading && diseaseDetails && (
         <TouchableOpacity onPress={() => navigation.navigate('DiseaseDetails', { disease: diseaseDetails })} style={styles.linkContainer}>
           <Text style={styles.linkText}>View Details</Text>
         </TouchableOpacity>
       )}
 
       {/* Display the LIME heatmap */}
-      {limeHeatmap ? (
+      {!loading && limeHeatmap && (
         <View style={styles.imageContainer}>
           <Text style={styles.infoText}>Explanation (LIME):</Text>
           <Image
@@ -170,8 +186,7 @@ const PredictScreen = () => {
             style={styles.image}
           />
         </View>
-      ) : null}
-
+      )}
 
       {/* Report Prediction Button */}
       <TouchableOpacity
