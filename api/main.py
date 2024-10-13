@@ -33,7 +33,7 @@ CLASS_NAMES = ['Apple', 'Banana', 'Bean', 'Coffee', 'Corn', 'Eggplant', 'Grapes'
 tomato_model_path = "models/tomatoModel.h5"
 pepper_model_path = "models/pepperModel.h5"
 potato_model_path = "models/potatoModel.h5"
-tea_model_path = "models/teaModel.h5"               ################################
+tea_model_path = "models/teaModel.h5"               
 apple_model_path = "models/appleModel.h5"
 bean_model_path = "models/soybeanModel.h5"         ###################################
 banana_model_path = "models/banana.h5"
@@ -41,7 +41,7 @@ corn_model_path = "models/cornModel.h5"
 coffee_model_path = "models/coffee 2.h5"            ###################################
 eggplant_model_path = "models/eggplantModel.h5"
 grapes_model_path = "models/grapeModel.h5"            ###################################
-sugarcane_model_path = "models/sugarcaneModel.h5"       ###################################
+sugarcane_model_path = "models/sugarcaneModel.h5"      
 rice_model_path = "models/riceModel.h5"
 
 if os.path.exists(plant_model_path):
@@ -61,14 +61,14 @@ TOMATO_CLASS_NAMES = ['Bacterial Spot',
  'Tomato Mosaic Virus',
  'Healthy']
 PEPPER_CLASS_NAMES = ['Bacterial Spot', 'Healthy']
-TEA_CLASS_NAMES = ['Anthracnose', 'Algal Leaf', 'Bird Eye Spot', 'Brown Blight', 'Gray Light', 'Healthy', 'Red Leaf Spot', 'White Spot']
+TEA_CLASS_NAMES = ['Anthracnose', 'Algal Leaf', "Bird's Eye Spot", 'Brown Blight', 'Gray Light', 'Healthy', 'Red Leaf Spot', 'White Spot']
 GRAPE_CLASS_NAMES = ['Black Measles', 'Black Rot', 'Healthy', 'Phoma Blight']
 APPLE_CLASS_NAMES = ['Apple Scab', 'Black Rot', 'Cedar Apple Rust', 'Healthy']
 SOYBEAN_CLASS_NAMES = ['Mossaic Virus', 'Southern Blight', 'Sudden Death Syndrome', 'Yellow Mosaic', 'Bacterial Blight', 'Brown Spot', 'Crestamento', 'Bean Rust', 'Powdery Mildew', 'Septoria']
 BANANA_CLASS_NAMES = ['Cordana', 'Healthy', 'Pestalotiopsis', 'Sigatoka']
 CORN_CLASS_NAMES = ['Northern Leaf Blight', 'Common Rust', 'Gray Leaf Spot', 'Healthy']
 COFFEE_CLASS_NAMES = ['Coffee Leaf Miner', 'Healthy', 'Phoma Blight', 'Rust of Coffee']
-SUGARCANE_CLASS_NAMES = ['Bacterial Blight', 'Mosaic Virus', 'Red Rot', 'Sugarcane Common Rust', 'Yellow Leaf Virus']
+SUGARCANE_CLASS_NAMES = ['Bacterial Blight', 'Healthy', 'Mosaic Virus', 'Red Rot', 'Sugarcane Common Rust', 'Yellow Leaf Virus']
 RICE_CLASS_NAMES = ['Brown Spot', 'Healthy', 'Rice Hispa', 'Leaf Blast']
 EGGPLANT_CLASS_NAMES = ['Healthy', 'Bacterial Wilt', 'Cercospora Leaf Spot', 'Insect Pest Disease', 'Mosaic Virus', 'Small Leaf Disease', 'White Mold']
 
@@ -88,7 +88,7 @@ class ImageData(BaseModel):
     base64: str
 
 
-def generate_lime_explanation(model, image, class_names):
+def generate_lime_explanation(model, image):
     explainer = lime_image.LimeImageExplainer()
     
     def predict_fn(images):
@@ -114,13 +114,16 @@ def generate_lime_explanation(model, image, class_names):
     plt.axis('off')
 
     buf = io.BytesIO()
-    plt.savefig(buf, format='png')
+    
+    # Save the heatmap with tight bounding box and no padding
+    plt.savefig(buf, format='png', bbox_inches='tight', pad_inches=0)
     plt.close()
     buf.seek(0)
 
     # Encode heatmap to base64
     heatmap_base64 = base64.b64encode(buf.read()).decode('utf-8')
     return heatmap_base64
+
 
 
 @app.post("/predict")
@@ -185,7 +188,7 @@ async def predict(image_data:ImageData):
     confidence = str(round(float(np.max(prediction[0])) * 100, 2)) + "%"
     
     # Generate LIME heatmap
-    lime_heatmap = generate_lime_explanation(next_model, resized_image.numpy().astype(np.uint8), crop_class_names)
+    lime_heatmap = generate_lime_explanation(next_model, resized_image.numpy().astype(np.uint8))
     
     return {
         "crop": crop,
