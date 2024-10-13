@@ -8,6 +8,9 @@ import tensorflow as tf
 import os
 import base64
 from pydantic import BaseModel
+from lime import lime_image
+import matplotlib.pyplot as plt
+import io
 
 app = FastAPI()
 
@@ -46,7 +49,6 @@ if os.path.exists(plant_model_path):
 else:
     raise FileNotFoundError(f"Model file not found at path: {plant_model_path}")
 
-
 POTATO_CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
 TOMATO_CLASS_NAMES = ['Bacterial Spot',
  'Early Blight',
@@ -62,16 +64,7 @@ PEPPER_CLASS_NAMES = ['Bacterial Spot', 'Healthy']
 TEA_CLASS_NAMES = ['Anthracnose', 'Algal Leaf', 'Bird Eye Spot', 'Brown Blight', 'Gray Light', 'Healthy', 'Red Leaf Spot', 'White Spot']
 GRAPE_CLASS_NAMES = ['Black Measles', 'Black Rot', 'Healthy', 'Phoma Blight']
 APPLE_CLASS_NAMES = ['Apple Scab', 'Black Rot', 'Cedar Apple Rust', 'Healthy']
-SOYBEAN_CLASS_NAMES = ['Mossaic Virus',
- 'Southern Blight',
- 'Sudden Death Syndrome',
- 'Yellow Mosaic',
- 'Bacterial Blight',
- 'Brown Spot',
- 'Crestamento',
- 'Bean Rust',
- 'Powdery Mildew',
- 'Septoria']
+SOYBEAN_CLASS_NAMES = ['Mossaic Virus', 'Southern Blight', 'Sudden Death Syndrome', 'Yellow Mosaic', 'Bacterial Blight', 'Brown Spot', 'Crestamento', 'Bean Rust', 'Powdery Mildew', 'Septoria']
 BANANA_CLASS_NAMES = ['Cordana', 'Healthy', 'Pestalotiopsis', 'Sigatoka']
 CORN_CLASS_NAMES = ['Northern Leaf Blight', 'Common Rust', 'Gray Leaf Spot', 'Healthy']
 COFFEE_CLASS_NAMES = ['Coffee Leaf Miner', 'Healthy', 'Phoma Blight', 'Rust of Coffee']
@@ -94,6 +87,42 @@ def read_file_as_image(file) -> np.ndarray:
 class ImageData(BaseModel):
     base64: str
 
+
+def generate_lime_explanation(model, image, class_names):
+    explainer = lime_image.LimeImageExplainer()
+    
+    def predict_fn(images):
+        images = np.array(images)
+        return model.predict(images)
+    
+    explanation = explainer.explain_instance(
+        image, 
+        predict_fn, 
+        top_labels=1, 
+        hide_color=0, 
+        num_samples=1000
+    )
+
+    # Get the heatmap for the top prediction
+    top_label = explanation.top_labels[0]
+    dict_heatmap = dict(explanation.local_exp[top_label])
+    heatmap = np.vectorize(dict_heatmap.get)(explanation.segments)
+    
+    # Create heatmap image
+    plt.imshow(image)
+    plt.imshow(heatmap, cmap="viridis", alpha=0.5)
+    plt.axis('off')
+
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    plt.close()
+    buf.seek(0)
+
+    # Encode heatmap to base64
+    heatmap_base64 = base64.b64encode(buf.read()).decode('utf-8')
+    return heatmap_base64
+
+
 @app.post("/predict")
 async def predict(image_data:ImageData):
     #print(image_data.base64)
@@ -103,77 +132,68 @@ async def predict(image_data:ImageData):
     image = read_file_as_image(image_data_bytes)
     
     resized_image = tf.image.resize(image, (256, 256))
-
     img_batch = np.expand_dims(resized_image, 0)
     prediction = MODEL.predict(img_batch)
     
     crop = CLASS_NAMES[np.argmax(prediction[0])]
     
+    # Initialize crop-specific model
     if crop == "Potato":
         next_model = tf.keras.models.load_model(potato_model_path)
-        prediction = next_model.predict(img_batch)
-        return {"crop": crop, "class": POTATO_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
-    
-    if crop == "Tomato":
+        crop_class_names = POTATO_CLASS_NAMES
+    elif crop == "Tomato":
         next_model = tf.keras.models.load_model(tomato_model_path)
-        prediction = next_model.predict(img_batch)
-        return {"crop": crop, "class": TOMATO_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
-    
-    if crop == "Pepper":
+        crop_class_names = TOMATO_CLASS_NAMES
+    elif crop == "Pepper":
         next_model = tf.keras.models.load_model(pepper_model_path)
-        prediction = next_model.predict(img_batch)
-        return {"crop": crop, "class": PEPPER_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
-    
-    if crop == "Tea":
+        crop_class_names = PEPPER_CLASS_NAMES
+    elif crop == "Tea":
         next_model = tf.keras.models.load_model(tea_model_path)
-        prediction = next_model.predict(img_batch)
-        return {"crop": crop, "class": TEA_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
-    
-    if crop == "Grapes":
+        crop_class_names = TEA_CLASS_NAMES
+    elif crop == "Grapes":
         next_model = tf.keras.models.load_model(grapes_model_path)
-        prediction = next_model.predict(img_batch)
-        return {"crop": crop, "class": GRAPE_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
-    
-    if crop == "Bean":
+        crop_class_names = GRAPE_CLASS_NAMES
+    elif crop == "Bean":
         next_model = tf.keras.models.load_model(bean_model_path)
-        prediction = next_model.predict(img_batch)
-        return {"crop": crop, "class": SOYBEAN_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
-    
-    if crop == "Eggplant":
+        crop_class_names = SOYBEAN_CLASS_NAMES
+    elif crop == "Eggplant":
         next_model = tf.keras.models.load_model(eggplant_model_path)
-        prediction = next_model.predict(img_batch)
-        return {"crop": crop, "class": EGGPLANT_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
-    
-    if crop == "Corn":
+        crop_class_names = EGGPLANT_CLASS_NAMES
+    elif crop == "Corn":
         next_model = tf.keras.models.load_model(corn_model_path)
-        prediction = next_model.predict(img_batch)
-        return {"crop": crop, "class": CORN_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
-    
-    if crop == "Rice":
+        crop_class_names = CORN_CLASS_NAMES
+    elif crop == "Rice":
         next_model = tf.keras.models.load_model(rice_model_path)
-        prediction = next_model.predict(img_batch)
-        return {"crop": crop, "class": RICE_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
-    
-    if crop == "Apple":
+        crop_class_names = RICE_CLASS_NAMES
+    elif crop == "Apple":
         next_model = tf.keras.models.load_model(apple_model_path)
-        prediction = next_model.predict(img_batch)
-        return {"crop": crop, "class": APPLE_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
-    
-    if crop == "Banana":
+        crop_class_names = APPLE_CLASS_NAMES
+    elif crop == "Banana":
         next_model = tf.keras.models.load_model(banana_model_path)
-        prediction = next_model.predict(img_batch)
-        return {"crop": crop, "class": BANANA_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
-    
-    if crop == "Coffee":
+        crop_class_names = BANANA_CLASS_NAMES
+    elif crop == "Coffee":
         next_model = tf.keras.models.load_model(coffee_model_path)
-        prediction = next_model.predict(img_batch)
-        return {"crop": crop, "class": COFFEE_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
-    
-    if crop == "Sugarcane":
+        crop_class_names = COFFEE_CLASS_NAMES
+    elif crop == "Sugarcane":
         next_model = tf.keras.models.load_model(sugarcane_model_path)
-        prediction = next_model.predict(img_batch)
-        return {"crop": crop, "class": SUGARCANE_CLASS_NAMES[np.argmax(prediction[0])], "confidence": str(round(float(np.max(prediction[0]))*100, 2))+"%"}
+        crop_class_names = SUGARCANE_CLASS_NAMES
+    else:
+        return {"error": "Unknown crop"}
+
+    prediction = next_model.predict(img_batch)
+    predicted_class = crop_class_names[np.argmax(prediction[0])]
+    confidence = str(round(float(np.max(prediction[0])) * 100, 2)) + "%"
     
+    # Generate LIME heatmap
+    lime_heatmap = generate_lime_explanation(next_model, resized_image.numpy().astype(np.uint8), crop_class_names)
+    
+    return {
+        "crop": crop,
+        "class": predicted_class,
+        "confidence": confidence,
+        "lime_heatmap": lime_heatmap  # base64 encoded heatmap
+    }
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8001)

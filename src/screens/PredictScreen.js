@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Alert, SafeAreaView, Pressable } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Alert, SafeAreaView, Pressable, ScrollView, BackHandler } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
-import { FontAwesome } from '@expo/vector-icons'; // Make sure you have expo-vector-icons installed
 import * as ImagePicker from 'expo-image-picker';
 import { diseaseList } from '../Diseases';
+import BackButton from '../components/BackButton';
 
 const PredictScreen = () => {
   const navigation = useNavigation();
@@ -14,7 +14,9 @@ const PredictScreen = () => {
   const [plantType, setPlantType] = useState('');
   const [disease, setDisease] = useState('');
   const [confidence, setConfidence] = useState('');
+  const [limeHeatmap, setLimeHeatmap] = useState(''); // Add state to store the heatmap
 
+  // Pick an image from the gallery
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -29,47 +31,36 @@ const PredictScreen = () => {
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
+        base64: true, // Request base64 image directly
       });
 
       if (!result.canceled) {
-        const uri = result.assets[0].uri;
-        setFile(uri);
-
-        const formData = new FormData();
-        formData.append('file', {
-          uri: uri,
-          name: 'Image.jpg',
-          type: 'image/jpeg',
-        });
+        const base64Image = result.assets[0].base64; // Store the base64 string
+        setFile(result.assets[0].uri); // Store URI for display
 
         try {
-          console.log(result.assets[0].base64)
-          const response = await axios.post('http://localhost:8001/predict', {base64:result.assets[0].uri.split(",")[1]});
+          // Sending the base64 image to the backend
+          const response = await axios.post('http://localhost:8001/predict', {
+            base64: base64Image
+          });
 
-          // Handle the response from the server
           console.log('Response from server: ', response.data);
-          setMessage(response.data.message);
 
-          const { crop, class: diseaseClass, confidence: conf } = response.data;
+          // Extract data from response
+          const { crop, class: diseaseClass, confidence: conf, lime_heatmap } = response.data;
           setPlantType(crop);
           setDisease(diseaseClass);
           setConfidence(conf);
+          setLimeHeatmap(lime_heatmap); // Set the heatmap
+
         } catch (error) {
-          if (error.response) {
-            console.error('Server Error: ', error.response.data);
-            setError('Server Error: ' + error.response.data.message);
-          } else if (error.request) {
-            console.error('Network Error: No response received', error.request);
-            setError('Network Error: No response received');
-          } else {
-            console.error('Error: ', error.message);
-            setError('Error: ' + error.message);
-          }
+          handleError(error);
         }
       }
     }
   };
 
+  // Take a picture using the camera
   const takePicture = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
 
@@ -83,57 +74,56 @@ const PredictScreen = () => {
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
+        base64: true, // Request base64 image directly
       });
 
       if (!result.canceled) {
-        const uri = result.assets[0].uri;
-        setFile(uri);
-
-        const formData = new FormData();
-        formData.append('file', {
-          uri: uri,
-          name: 'Image.jpg',
-          type: 'image/jpeg',
-        });
+        const base64Image = result.assets[0].base64; // Store the base64 string
+        setFile(result.assets[0].uri); // Store URI for display
 
         try {
-          console.log(result.assets[0].base64)
-          const response = await axios.post('http://localhost:8001/predict', {base64:result.assets[0].uri.split(",")[1]});
+          // Sending the base64 image to the backend
+          const response = await axios.post('http://localhost:8001/predict', {
+            base64: base64Image
+          });
 
-          // Handle the response from the server
           console.log('Response from server: ', response.data);
-          setMessage(response.data.message);
 
-          const { crop, class: diseaseClass, confidence: conf } = response.data;
+          // Extract data from response
+          const { crop, class: diseaseClass, confidence: conf, lime_heatmap } = response.data;
           setPlantType(crop);
           setDisease(diseaseClass);
           setConfidence(conf);
+          setLimeHeatmap(lime_heatmap); // Set the heatmap
+
         } catch (error) {
-          if (error.response) {
-            console.error('Server Error: ', error.response.data);
-            setError('Server Error: ' + error.response.data.message);
-          } else if (error.request) {
-            console.error('Network Error: No response received', error.request);
-            setError('Network Error: No response received');
-          } else {
-            console.error('Error: ', error.message);
-            setError('Error: ' + error.message);
-          }
+          handleError(error);
         }
       }
+    }
+  };
+
+  // Handle errors
+  const handleError = (error) => {
+    if (error.response) {
+      console.error('Server Error: ', error.response.data);
+      setError('Server Error: ' + error.response.data.message);
+    } else if (error.request) {
+      console.error('Network Error: No response received', error.request);
+      setError('Network Error: No response received');
+    } else {
+      console.error('Error: ', error.message);
+      setError('Error: ' + error.message);
     }
   };
 
   const diseaseDetails = disease !== "Healthy" ? diseaseList.find(detail => detail.disease === disease) : null;
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView style={{ flexDirection: "row", marginHorizontal: 16 , marginTop: 12}}>
-        <Pressable style={{ flex: 1 }} onPress={() => navigation.goBack()}>
-          <FontAwesome name={"arrow-circle-left"} size={28} color="black" />
-        </Pressable>
-      </SafeAreaView>
+    <ScrollView contentContainerStyle={styles.container}>
+      <BackButton />
       
+      {/* Image selection buttons */}
       <TouchableOpacity onPress={pickImage} style={styles.button}>
         <Text style={styles.buttonText}>Pick an Image</Text>
       </TouchableOpacity>
@@ -142,6 +132,7 @@ const PredictScreen = () => {
         <Text style={styles.buttonText}>Take a Picture</Text>
       </TouchableOpacity>
 
+      {/* Display uploaded/taken image */}
       {file ? (
         <View style={styles.imageContainer}>
           <Image source={{ uri: file }} style={styles.image} />
@@ -150,6 +141,7 @@ const PredictScreen = () => {
         <Text style={styles.errorText}>{error}</Text>
       )}
 
+      {/* Display plant type, disease, and confidence */}
       <View style={styles.infoContainer}>
         <View style={styles.infoBox}>
           <Text style={styles.infoText}>Plant Type: {plantType}</Text>
@@ -162,12 +154,26 @@ const PredictScreen = () => {
         </View>
       </View>
 
+      {/* Display link to view details */}
       {diseaseDetails && (
         <TouchableOpacity onPress={() => navigation.navigate('DiseaseDetails', { disease: diseaseDetails })} style={styles.linkContainer}>
           <Text style={styles.linkText}>View Details</Text>
         </TouchableOpacity>
       )}
 
+      {/* Display the LIME heatmap */}
+      {limeHeatmap ? (
+        <View style={styles.imageContainer}>
+          <Text style={styles.infoText}>Explanation (LIME):</Text>
+          <Image
+            source={{ uri: `data:image/png;base64,${limeHeatmap}` }} // Display heatmap as an image
+            style={styles.image}
+          />
+        </View>
+      ) : null}
+
+
+      {/* Report Prediction Button */}
       <TouchableOpacity
         onPress={() => navigation.navigate("FeedbackForm")}
         style={{ backgroundColor: "#f96163", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" }}>
@@ -175,13 +181,13 @@ const PredictScreen = () => {
           Report Prediction
         </Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
@@ -234,18 +240,6 @@ const styles = StyleSheet.create({
     color: 'blue',
     textDecorationLine: 'underline',
     fontSize: 18,
-  },
-  reportButton: {
-    backgroundColor: '#f96163',
-    padding: 10,
-    borderRadius: 5,
-    width: '80%',
-    alignItems: 'center',
-  },
-  reportButtonText: {
-    color: 'white',
-    fontSize: 20,
-    fontWeight: 'bold',
   },
 });
 
