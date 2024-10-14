@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import { send, EmailJSResponseStatus } from '@emailjs/react-native';
+import BackButton from '../components/BackButton';
 
 const ReportScreen = () => {
   const [email, setEmail] = useState('');
@@ -48,6 +49,7 @@ const ReportScreen = () => {
         onChangeText={setName}
       />
       <Button title="Submit" onPress={onSubmit} />
+      <BackButton />
     </View>
   );
 };
