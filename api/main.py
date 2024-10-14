@@ -53,7 +53,7 @@ POTATO_CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
 TOMATO_CLASS_NAMES = ['Bacterial Spot',
  'Early Blight',
  'Late Blight',
- 'Leaf Mold',
+ 'Tomato Leaf Mold',
  'Septoria Leaf Spot',
  'Two-spotted Spider Mite',
  'Target Spot',
@@ -61,7 +61,7 @@ TOMATO_CLASS_NAMES = ['Bacterial Spot',
  'Tomato Mosaic Virus',
  'Healthy']
 PEPPER_CLASS_NAMES = ['Bacterial Spot', 'Healthy']
-TEA_CLASS_NAMES = ['Anthracnose', 'Algal Leaf', "Bird's Eye Spot", 'Brown Blight', 'Gray Light', 'Healthy', 'Red Leaf Spot', 'White Spot']
+TEA_CLASS_NAMES = ['Anthracnose', 'Algal Leaf Spot', "Bird's Eye Spot", 'Brown Blight', 'Gray Light', 'Healthy', 'Red Leaf Spot', 'White Spot']
 GRAPE_CLASS_NAMES = ['Black Measles', 'Black Rot', 'Healthy', 'Phoma Blight']
 APPLE_CLASS_NAMES = ['Apple Scab', 'Black Rot', 'Cedar Apple Rust', 'Healthy']
 SOYBEAN_CLASS_NAMES = ['Mossaic Virus', 'Southern Blight', 'Sudden Death Syndrome', 'Yellow Mosaic', 'Bacterial Blight', 'Brown Spot', 'Crestamento', 'Bean Rust', 'Powdery Mildew', 'Septoria']
