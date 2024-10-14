@@ -41,7 +41,7 @@ const PredictScreen = () => {
 
         try {
           // Sending the base64 image to the backend
-          const response = await axios.post('http://localhost:8001/predict', {
+          const response = await axios.post('http://10.0.0.2:8001/predict', {
             base64: base64Image
           });
 
@@ -87,7 +87,7 @@ const PredictScreen = () => {
 
         try {
           // Sending the base64 image to the backend
-          const response = await axios.post('http://localhost:8001/predict', {
+          const response = await axios.post('http://10.0.0.2:8001/predict', {
             base64: base64Image
           });
 
