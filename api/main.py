@@ -35,12 +35,12 @@ pepper_model_path = "models/pepperModel.h5"
 potato_model_path = "models/potatoModel.h5"
 tea_model_path = "models/teaModel.h5"               
 apple_model_path = "models/appleModel.h5"
-bean_model_path = "models/soybeanModel.h5"         ###################################
+bean_model_path = "models/beanModel.h5"         
 banana_model_path = "models/banana.h5"
 corn_model_path = "models/cornModel.h5"
-coffee_model_path = "models/coffee 2.h5"            ###################################
+coffee_model_path = "models/coffeeModel.h5"            
 eggplant_model_path = "models/eggplantModel.h5"
-grapes_model_path = "models/grapeModel.h5"            ###################################
+grapes_model_path = "models/grapeModel.h5"            
 sugarcane_model_path = "models/sugarcaneModel.h5"      
 rice_model_path = "models/riceModel.h5"
 

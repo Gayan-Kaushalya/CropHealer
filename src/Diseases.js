@@ -171,8 +171,8 @@ export const diseaseList = [
         id: "7",
         disease: "Phoma Blight",
         image: require("../assets/diseases/phoma_blight.jpg"),
-        crops: ["Grapes", "Mango"],
-        description: "Phoma blight is a common disease of grapes and mango caused by the fungus Phoma spp. The disease affects the foliage, stems, and fruits of grapes and mango. Phoma blight is favored by warm, wet conditions and can spread rapidly in fields or gardens.",
+        crops: ["Grapes", "Mango", "Coffee"],
+        description: "Phoma blight is a common disease of grape, mango and coffee caused by the fungus Phoma spp. The disease affects the foliage, stems, and fruits of grapes and mango. Phoma blight is favored by warm, wet conditions and can spread rapidly in fields or gardens.",
         symptoms: [
             "Dark, sunken lesions on leaves, stems, and fruits.",
             "Yellowing and browning of leaves.",
