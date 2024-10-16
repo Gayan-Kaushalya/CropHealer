@@ -41,3 +41,4 @@ gcp/
 .venv/
 android/
 models/
+.pytest_cache/
