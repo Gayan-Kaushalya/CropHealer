@@ -5,7 +5,7 @@ import React from "react";
 const WelcomeScreen = ({ navigation }) => {
     return (
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-            <Image source={require("./../../assets/favicon.png")} />
+            <Image source={require("./../../assets/CropHealer Logo.jpg")} style={{ width: 200, height: 200 }} />
 
             <Text style={{ color: "green", fontSize: 42, fontWeight: "bold" }}>
                 Welcome to CropHealer!
