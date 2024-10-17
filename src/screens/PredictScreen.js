@@ -112,15 +112,15 @@ const PredictScreen = () => {
   const diseaseDetails = disease !== "Healthy" ? diseaseList.find(detail => detail.disease === disease) : null;
 
   return (
+    <View style={{ flex: 1 , padding: 16 }}>
+    <BackButton />
     <ScrollView contentContainerStyle={styles.container}>
-      <BackButton />
-      
       {/* Image selection buttons */}
-      <TouchableOpacity onPress={pickImage} style={styles.button}>
+      <TouchableOpacity onPress={pickImage} style={styles.button} disabled={ predictionLoading || heatMapLoading }>
         <Text style={styles.buttonText}>Pick an Image</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={takePicture} style={styles.button}>
+      <TouchableOpacity onPress={takePicture} style={styles.button} disabled={ predictionLoading || heatMapLoading }>
         <Text style={styles.buttonText}>Take a Picture</Text>
       </TouchableOpacity>
 
@@ -155,32 +155,30 @@ const PredictScreen = () => {
           </View>
 
 
-                {/* Display link to view details */}
-      {diseaseDetails && !predictionLoading && (
-        <TouchableOpacity onPress={() => navigation.navigate('DiseaseDetails', { disease: diseaseDetails })} style={styles.linkContainer}>
-          <Text style={styles.linkText}>View Details</Text>
-        </TouchableOpacity>
-      )}
+          {/* Display link to view details */}
+          {diseaseDetails && !predictionLoading && (
+            <TouchableOpacity onPress={() => navigation.navigate('DiseaseDetails', { disease: diseaseDetails })} style={styles.linkContainer}>
+              <Text style={styles.linkText}>View Details</Text>
+            </TouchableOpacity>
+          )}
 
-      {/* Display loading indicator for LIME heatmap */}
-      {heatMapLoading && ( 
-        <ActivityIndicator size="large" color="#0000ff" />
-      )}
+          {/* Display loading indicator for LIME heatmap */}
+          {heatMapLoading && ( 
+            <ActivityIndicator size="large" color="#0000ff" />
+          )}
 
-      {/* Display the LIME heatmap */}
-      {limeHeatmap && !heatMapLoading && !predictionLoading &&   (
-        <View style={styles.imageContainer}>
-          <Text style={styles.infoText}>Explanation (LIME):</Text>
-          <Image
-            source={{ uri: `data:image/png;base64,${limeHeatmap}` }} // Display heatmap as an image
-            style={styles.image}
-          />
+          {/* Display the LIME heatmap */}
+          {limeHeatmap && !heatMapLoading && !predictionLoading &&   (
+            <View style={styles.imageContainer}>
+              <Text style={styles.infoText}>Explanation (LIME):</Text>
+              <Image
+                source={{ uri: `data:image/png;base64,${limeHeatmap}` }} // Display heatmap as an image
+                style={styles.image}
+              />
+            </View>
+          )}
         </View>
       )}
-        </View>
-      )}
-
-
 
       {/* Report Prediction Button */}
       <TouchableOpacity
@@ -191,6 +189,7 @@ const PredictScreen = () => {
         </Text>
       </TouchableOpacity>
     </ScrollView>
+    </View>
   );
 };
 
