@@ -13,8 +13,9 @@ const PredictScreen = () => {
   const [plantType, setPlantType] = useState('');
   const [disease, setDisease] = useState('');
   const [confidence, setConfidence] = useState('');
-  const [limeHeatmap, setLimeHeatmap] = useState(''); 
-  const [loading, setLoading] = useState(false); 
+  const [limeHeatmap, setLimeHeatmap] = useState('');
+  const [predictionLoading, setPredictionLoading] = useState(false);
+  const [heatMapLoading, setHeatMapLoading] = useState(false);
 
   // Pick an image from the gallery
   const pickImage = async () => {
@@ -31,7 +32,7 @@ const PredictScreen = () => {
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
-        base64: true, 
+        base64: true,
       });
 
       if (!result.canceled) {
@@ -42,20 +43,23 @@ const PredictScreen = () => {
 
   // Handle image selection
   const handleImageSelection = async (asset) => {
-    const base64Image = asset.base64; 
-    setFile(asset.uri); 
-    setLoading(true); 
+    const base64Image = asset.base64;
+    setFile(asset.uri);
+    setPredictionLoading(true); 
+    setHeatMapLoading(false);
 
     try {
       // Sending the base64 image to the backend for prediction
       const response = await axios.post('http://localhost:8001/predict', { base64: base64Image });
       console.log('Response from server: ', response.data);
 
-      const { crop, class: diseaseClass, confidence: conf, lime_heatmap } = response.data;
+      const { crop, class: diseaseClass, confidence: conf} = response.data;
       setPlantType(crop);
       setDisease(diseaseClass);
       setConfidence(conf);
-      setLimeHeatmap(lime_heatmap); 
+      setPredictionLoading(false); 
+      setHeatMapLoading(true);
+    //  setLimeHeatmap(lime_heatmap);
 
       // Now request the LIME explanation using the same image
       const limeResponse = await axios.post('http://localhost:8001/lime', { base64: base64Image });
@@ -64,7 +68,7 @@ const PredictScreen = () => {
     } catch (error) {
       handleError(error);
     } finally {
-      setLoading(false); 
+      setHeatMapLoading(false); 
     }
   };
 
@@ -128,7 +132,7 @@ const PredictScreen = () => {
       )}
 
       {/* Display loading indicator */}
-      {loading && (
+      {predictionLoading && (
         <ActivityIndicator size="large" color="#0000ff" />
       )}
 
@@ -138,7 +142,7 @@ const PredictScreen = () => {
       )}
 
       {/* Display plant type, disease, and confidence */}
-      {!loading && file && (
+      {file && !predictionLoading && (
         <View style={styles.infoContainer}>
           <View style={styles.infoBox}>
             <Text style={styles.infoText}>Plant Type: {plantType}</Text>
@@ -153,14 +157,19 @@ const PredictScreen = () => {
       )}
 
       {/* Display link to view details */}
-      {!loading && diseaseDetails && (
+      {diseaseDetails && !predictionLoading && (
         <TouchableOpacity onPress={() => navigation.navigate('DiseaseDetails', { disease: diseaseDetails })} style={styles.linkContainer}>
           <Text style={styles.linkText}>View Details</Text>
         </TouchableOpacity>
       )}
 
+      {/* Display loading indicator for LIME heatmap */}
+      {heatMapLoading && ( 
+        <ActivityIndicator size="large" color="#0000ff" />
+      )}
+
       {/* Display the LIME heatmap */}
-      {!loading && limeHeatmap && (
+      {limeHeatmap && !heatMapLoading && !predictionLoading &&   (
         <View style={styles.imageContainer}>
           <Text style={styles.infoText}>Explanation (LIME):</Text>
           <Image
