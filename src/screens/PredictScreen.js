@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, Alert, SafeAreaView, Pressable, ScrollView, BackHandler, ActivityIndicator } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Alert, SafeAreaView, ScrollView, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
@@ -13,8 +13,8 @@ const PredictScreen = () => {
   const [plantType, setPlantType] = useState('');
   const [disease, setDisease] = useState('');
   const [confidence, setConfidence] = useState('');
-  const [limeHeatmap, setLimeHeatmap] = useState(''); // Add state to store the heatmap
-  const [loading, setLoading] = useState(false); // Add state to manage loading
+  const [limeHeatmap, setLimeHeatmap] = useState(''); 
+  const [loading, setLoading] = useState(false); 
 
   // Pick an image from the gallery
   const pickImage = async () => {
@@ -31,35 +31,40 @@ const PredictScreen = () => {
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
-        base64: true, // Request base64 image directly
+        base64: true, 
       });
 
       if (!result.canceled) {
-        const base64Image = result.assets[0].base64; // Store the base64 string
-        setFile(result.assets[0].uri); // Store URI for display
-        setLoading(true); // Start loading
-
-        try {
-          // Sending the base64 image to the backend
-          const response = await axios.post('http://localhost:8001/predict', {
-            base64: base64Image
-          });
-
-          console.log('Response from server: ', response.data);
-
-          // Extract data from response
-          const { crop, class: diseaseClass, confidence: conf, lime_heatmap } = response.data;
-          setPlantType(crop);
-          setDisease(diseaseClass);
-          setConfidence(conf);
-          setLimeHeatmap(lime_heatmap); // Set the heatmap
-
-        } catch (error) {
-          handleError(error);
-        } finally {
-          setLoading(false); // Stop loading
-        }
+        handleImageSelection(result.assets[0]);
       }
+    }
+  };
+
+  // Handle image selection
+  const handleImageSelection = async (asset) => {
+    const base64Image = asset.base64; 
+    setFile(asset.uri); 
+    setLoading(true); 
+
+    try {
+      // Sending the base64 image to the backend for prediction
+      const response = await axios.post('http://localhost:8001/predict', { base64: base64Image });
+      console.log('Response from server: ', response.data);
+
+      const { crop, class: diseaseClass, confidence: conf, lime_heatmap } = response.data;
+      setPlantType(crop);
+      setDisease(diseaseClass);
+      setConfidence(conf);
+      setLimeHeatmap(lime_heatmap); 
+
+      // Now request the LIME explanation using the same image
+      const limeResponse = await axios.post('http://localhost:8001/lime', { base64: base64Image });
+      setLimeHeatmap(limeResponse.data.lime_heatmap);
+
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoading(false); 
     }
   };
 
@@ -77,34 +82,11 @@ const PredictScreen = () => {
         allowsEditing: true,
         aspect: [4, 3],
         quality: 1,
-        base64: true, // Request base64 image directly
+        base64: true,
       });
 
       if (!result.canceled) {
-        const base64Image = result.assets[0].base64; // Store the base64 string
-        setFile(result.assets[0].uri); // Store URI for display
-        setLoading(true); // Start loading
-
-        try {
-          // Sending the base64 image to the backend
-          const response = await axios.post('http://localhost:8001/predict', {
-            base64: base64Image
-          });
-
-          console.log('Response from server: ', response.data);
-
-          // Extract data from response
-          const { crop, class: diseaseClass, confidence: conf, lime_heatmap } = response.data;
-          setPlantType(crop);
-          setDisease(diseaseClass);
-          setConfidence(conf);
-          setLimeHeatmap(lime_heatmap); // Set the heatmap
-
-        } catch (error) {
-          handleError(error);
-        } finally {
-          setLoading(false); // Stop loading
-        }
+        handleImageSelection(result.assets[0]);
       }
     }
   };
