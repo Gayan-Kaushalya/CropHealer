@@ -153,10 +153,9 @@ const PredictScreen = () => {
           <View style={styles.infoBox}>
             <Text style={styles.infoText}>Confidence: {confidence}</Text>
           </View>
-        </View>
-      )}
 
-      {/* Display link to view details */}
+
+                {/* Display link to view details */}
       {diseaseDetails && !predictionLoading && (
         <TouchableOpacity onPress={() => navigation.navigate('DiseaseDetails', { disease: diseaseDetails })} style={styles.linkContainer}>
           <Text style={styles.linkText}>View Details</Text>
@@ -178,6 +177,10 @@ const PredictScreen = () => {
           />
         </View>
       )}
+        </View>
+      )}
+
+
 
       {/* Report Prediction Button */}
       <TouchableOpacity
