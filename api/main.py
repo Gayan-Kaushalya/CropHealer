@@ -16,7 +16,7 @@ from fastapi import HTTPException, Depends
 from datetime import timedelta
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, EmailStr, Field
-from typing import List, Optional
+from typing import List, Optional, Any
 import logging
 import jwt
 from passlib.context import CryptContext
@@ -39,20 +39,21 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Models
 class Report(BaseModel):
-    report_id: str
-    report_date: str
-    pred_plant: str
-    pred_disease: str
-    pred_prob: float
-    act_plant: str
-    act_disease: str    
+    email: EmailStr
+    date: str
+    predPlant: str
+    predDisease: str
+    pred_prob: str
+    actPlant: Optional[str] = None
+    actDisease: Optional[str] = None  
+    details: Optional[str] = None
 
 # Pydantic model for the User
 class User(BaseModel):
     email: EmailStr = Field(..., unique=True)
     password: str
     reports: Optional[List[Report]] = []
-    
+
 class UserResponse(BaseModel):
     id: str
     email: EmailStr
@@ -128,7 +129,8 @@ def generate_lime_explanation(model, image):
         predict_fn,
         top_labels=1,
         hide_color=0,
-        num_samples=1000
+        # num_samples=1000
+        num_samples=10
     )
 
     top_label = explanation.top_labels[0]
@@ -271,6 +273,37 @@ async def lime(image_data: ImageData):
     return {
         "lime_heatmap": lime_heatmap  # base64 encoded heatmap
     }
+    
+@app.post("/report")
+async def report(report: Report):
+    logging.info(report.model_dump_json())
+
+    # Find user by ID
+    user = await users_collection.find_one({"email": report.email})
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Add report to the user's report lista
+    report_dict = report.model_dump()
+    
+    await users_collection.update_one(
+        {"email": report.email}, 
+        {"$push": {"reports": report_dict}}  # Push new report to reports array
+    )
+    
+    return {"message": "Report submitted successfully"}
+
+@app.get("/getreports")
+async def get_reports(email: str):
+    logging.info(f"Fetching reports for {email}")
+    user = await users_collection.find_one({"email": email})
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    reports = user.get("reports", [])
+    return {"user": user['email'], "reports": reports}  # Optionally return the email for clarity
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8001)
