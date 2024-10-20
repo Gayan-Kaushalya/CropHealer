@@ -2,6 +2,8 @@ import { StyleSheet, Text, View, Image, SafeAreaView, Pressable, ScrollView } fr
 import React from "react";
 import BackButton from "../components/BackButton";
 
+
+
 const DiseaseDetailsScreen = ({ route }) => {
     const { disease } = route.params || {};
 

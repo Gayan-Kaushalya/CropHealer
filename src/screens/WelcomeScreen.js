@@ -31,7 +31,14 @@ const WelcomeScreen = ({ navigation }) => {
                     Explore
                 </Text>
             </TouchableOpacity>
-            
+
+            <TouchableOpacity
+                onPress={() => navigation.navigate("Login")}
+                style={{ backgroundColor: "green", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" , marginTop: 10 }}>
+                <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
+                    Login
+                </Text>
+            </TouchableOpacity>           
 
         </View>
     );

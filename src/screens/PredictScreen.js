@@ -49,8 +49,15 @@ const PredictScreen = () => {
     setHeatMapLoading(false);
 
     try {
+      // const url = 'http://10.0.2.2:8001/';          // For Android Emulator
+      const url = 'http://192.168.8.165:8001/';   // For Android Device (My Router IP)
+      // const url = 'http://10.10.16.65:8001/';   // For Android Device (Sysco Wi-Fi)
+      // const url = 'http://localhost:8001/';         // For Web
+
+      console.log('Sending image to server for prediction...');
+
       // Sending the base64 image to the backend for prediction
-      const response = await axios.post('http://localhost:8001/predict', { base64: base64Image });
+      const response = await axios.post(url+'predict', { base64: base64Image });
       console.log('Response from server: ', response.data);
 
       const { crop, class: diseaseClass, confidence: conf} = response.data;
@@ -62,7 +69,7 @@ const PredictScreen = () => {
     //  setLimeHeatmap(lime_heatmap);
 
       // Now request the LIME explanation using the same image
-      const limeResponse = await axios.post('http://localhost:8001/lime', { base64: base64Image });
+      const limeResponse = await axios.post(url+'lime', { base64: base64Image });
       setLimeHeatmap(limeResponse.data.lime_heatmap);
 
     } catch (error) {
@@ -151,7 +158,7 @@ const PredictScreen = () => {
             <Text style={styles.infoText}>Disease: {disease}</Text>
           </View>
           <View style={styles.infoBox}>
-            <Text style={styles.infoText}>Confidence: {confidence}</Text>
+            <Text style={styles.infoText}>Probability: {confidence}</Text>
           </View>
 
 
@@ -182,7 +189,11 @@ const PredictScreen = () => {
 
       {/* Report Prediction Button */}
       <TouchableOpacity
-        onPress={() => navigation.navigate("FeedbackForm")}
+        onPress={() => navigation.navigate("FeedbackForm", {
+          plantType: plantType,
+          disease: disease,
+          probability: confidence,
+        })}
         style={{ backgroundColor: "#f96163", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" }}>
         <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
           Report Prediction
