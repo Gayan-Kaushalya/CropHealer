@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { diseaseList } from '../Diseases';
-import BackButton from '../components/BackButton';
+import Header from '../components/Header';
 
 const PredictScreen = () => {
   const navigation = useNavigation();
@@ -16,15 +16,17 @@ const PredictScreen = () => {
   const [limeHeatmap, setLimeHeatmap] = useState('');
   const [predictionLoading, setPredictionLoading] = useState(false);
   const [heatMapLoading, setHeatMapLoading] = useState(false);
+  const [base64Image, setBase64Image] = useState('');
 
   // Pick an image from the gallery
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    console.log(status);
 
     if (status !== "granted") {
       Alert.alert(
         "Permission Denied",
-        "Sorry, we need camera roll permission to upload images."
+        "Sorry, we need camera roll permission to access your photos."
       );
     } else {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -44,6 +46,7 @@ const PredictScreen = () => {
   // Handle image selection
   const handleImageSelection = async (asset) => {
     const base64Image = asset.base64;
+    setBase64Image(base64Image);
     setFile(asset.uri);
     setPredictionLoading(true); 
     setHeatMapLoading(false);
@@ -91,7 +94,7 @@ const PredictScreen = () => {
     } else {
       const result = await ImagePicker.launchCameraAsync({
         allowsEditing: true,
-        aspect: [4, 3],
+        aspect: [3, 3],
         quality: 1,
         base64: true,
       });
@@ -119,87 +122,88 @@ const PredictScreen = () => {
   const diseaseDetails = disease !== "Healthy" ? diseaseList.find(detail => detail.disease === disease) : null;
 
   return (
-    <View style={{ flex: 1 , padding: 16 }}>
-    <BackButton />
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* Image selection buttons */}
-      <TouchableOpacity onPress={pickImage} style={styles.button} disabled={ predictionLoading || heatMapLoading }>
-        <Text style={styles.buttonText}>Pick an Image</Text>
-      </TouchableOpacity>
+    <View style={{ flex: 1 }}>
+      <Header />
+      <ScrollView contentContainerStyle={styles.container}>
+        {/* Image selection buttons */}
+        <TouchableOpacity onPress={pickImage} style={styles.button} disabled={ predictionLoading || heatMapLoading }>
+          <Text style={styles.buttonText}>Pick an Image</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity onPress={takePicture} style={styles.button} disabled={ predictionLoading || heatMapLoading }>
-        <Text style={styles.buttonText}>Take a Picture</Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={takePicture} style={styles.button} disabled={ predictionLoading || heatMapLoading }>
+          <Text style={styles.buttonText}>Take a Picture</Text>
+        </TouchableOpacity>
 
-      {/* Display uploaded/taken image */}
-      {file && (
-        <View style={styles.imageContainer}>
-          <Image source={{ uri: file }} style={styles.image} />
-        </View>
-      )}
-
-      {/* Display loading indicator */}
-      {predictionLoading && (
-        <ActivityIndicator size="large" color="#0000ff" />
-      )}
-
-      {/* Display error message */}
-      {!file && error && (
-        <Text style={styles.errorText}>{error}</Text>
-      )}
-
-      {/* Display plant type, disease, and confidence */}
-      {file && !predictionLoading && (
-        <View style={styles.infoContainer}>
-          <View style={styles.infoBox}>
-            <Text style={styles.infoText}>Plant Type: {plantType}</Text>
+        {/* Display uploaded/taken image */}
+        {file && (
+          <View style={styles.imageContainer}>
+            <Image source={{ uri: file }} style={styles.image} />
           </View>
-          <View style={styles.infoBox}>
-            <Text style={styles.infoText}>Disease: {disease}</Text>
-          </View>
-          <View style={styles.infoBox}>
-            <Text style={styles.infoText}>Probability: {confidence}</Text>
-          </View>
+        )}
 
+        {/* Display loading indicator */}
+        {predictionLoading && (
+          <ActivityIndicator size="large" color="#0000ff" />
+        )}
 
-          {/* Display link to view details */}
-          {diseaseDetails && !predictionLoading && (
-            <TouchableOpacity onPress={() => navigation.navigate('DiseaseDetails', { disease: diseaseDetails })} style={styles.linkContainer}>
-              <Text style={styles.linkText}>View Details</Text>
-            </TouchableOpacity>
-          )}
+        {/* Display error message */}
+        {!file && error && (
+          <Text style={styles.errorText}>{error}</Text>
+        )}
 
-          {/* Display loading indicator for LIME heatmap */}
-          {heatMapLoading && ( 
-            <ActivityIndicator size="large" color="#0000ff" />
-          )}
-
-          {/* Display the LIME heatmap */}
-          {limeHeatmap && !heatMapLoading && !predictionLoading &&   (
-            <View style={styles.imageContainer}>
-              <Text style={styles.infoText}>Explanation (LIME):</Text>
-              <Image
-                source={{ uri: `data:image/png;base64,${limeHeatmap}` }} // Display heatmap as an image
-                style={styles.image}
-              />
+        {/* Display plant type, disease, and confidence */}
+        {file && !predictionLoading && (
+          <View style={styles.infoContainer}>
+            <View style={styles.infoBox}>
+              <Text style={styles.infoText}>Plant Type: {plantType}</Text>
             </View>
-          )}
-        </View>
-      )}
+            <View style={styles.infoBox}>
+              <Text style={styles.infoText}>Disease: {disease}</Text>
+            </View>
+            <View style={styles.infoBox}>
+              <Text style={styles.infoText}>Probability: {confidence}</Text>
+            </View>
 
-      {/* Report Prediction Button */}
-      <TouchableOpacity
-        onPress={() => navigation.navigate("FeedbackForm", {
-          plantType: plantType,
-          disease: disease,
-          probability: confidence,
-        })}
-        style={{ backgroundColor: "#f96163", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" }}>
-        <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
-          Report Prediction
-        </Text>
-      </TouchableOpacity>
-    </ScrollView>
+
+            {/* Display link to view details */}
+            {diseaseDetails && !predictionLoading && (
+              <TouchableOpacity onPress={() => navigation.navigate('DiseaseDetails', { disease: diseaseDetails })} style={styles.linkContainer}>
+                <Text style={styles.linkText}>View Details</Text>
+              </TouchableOpacity>
+            )}
+
+            {/* Display loading indicator for LIME heatmap */}
+            {heatMapLoading && ( 
+              <ActivityIndicator size="large" color="#0000ff" />
+            )}
+
+            {/* Display the LIME heatmap */}
+            {limeHeatmap && !heatMapLoading && !predictionLoading &&   (
+              <View style={styles.imageContainer}>
+                <Text style={styles.infoText}>Explanation (LIME):</Text>
+                <Image
+                  source={{ uri: `data:image/png;base64,${limeHeatmap}` }} // Display heatmap as an image
+                  style={styles.image}
+                />
+              </View>
+            )}
+          </View>
+        )}
+
+        {/* Report Prediction Button */}
+        <TouchableOpacity
+          onPress={() => navigation.navigate("FeedbackForm", {
+            plantType: plantType,
+            disease: disease,
+            probability: confidence,
+            photo: base64Image,
+          })}
+          style={{ backgroundColor: "#f96163", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" }}>
+          <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
+            Report Prediction
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   );
 };

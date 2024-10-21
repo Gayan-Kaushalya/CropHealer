@@ -12,7 +12,13 @@ const getToken = async () => {
   try {
     const token = await AsyncStorage.getItem('authToken');
     if (token !== null) {
-      return JSON.parse(token);
+      const tokenObj = JSON.parse(token);
+      const currentTime = new Date().getTime();
+      if (tokenObj.expiration > currentTime) {
+        return tokenObj;
+      } else {
+        await AsyncStorage.removeItem('authToken');
+      }
     }
     return null;
   } catch (error) {

@@ -1,22 +1,31 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, Button, Alert, StyleSheet } from "react-native";
+import { View, Text, TextInput, Button, Alert, StyleSheet, Image, ScrollView } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from "@react-native-async-storage/async-storage"; 
 
 // Function to get the authentication token from AsyncStorage
 const getToken = async () => {
     try {
-        const token = await AsyncStorage.getItem('authToken');
-        return token ? JSON.parse(token) : null; // Return parsed token or null
+      const token = await AsyncStorage.getItem('authToken');
+      if (token !== null) {
+        const tokenObj = JSON.parse(token);
+        const currentTime = new Date().getTime();
+        if (tokenObj.expiration > currentTime) {
+          return tokenObj;
+        } else {
+          await AsyncStorage.removeItem('authToken');
+        }
+      }
+      return null;
     } catch (error) {
-        console.error('Error retrieving token:', error);
-        return null;
+      console.error('Error retrieving token:', error);
+      return null;
     }
-};
+  };
 
 const ReportScreen = ({ route }) => {
-    const { plantType, disease, probability } = route.params;
+    const { plantType, disease, probability, photo } = route.params;
     const date = new Date();
 
     const navigation = useNavigation();
@@ -78,8 +87,14 @@ const ReportScreen = ({ route }) => {
     }
 
     return (
+        <ScrollView>
         <View style={styles.container}>
             <Text style={styles.header}>Report Form</Text>
+
+            <Image
+                source={{ uri: `data:image/jpg;base64,${photo}` }}
+                style={{ width: 200, height: 200, marginBottom: 16, borderWidth: 2, borderColor: "#000", marginLeft: "auto", marginRight: "auto" }}
+            />
             
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>Predicted Plant</Text>
@@ -120,7 +135,7 @@ const ReportScreen = ({ route }) => {
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>Details</Text>
                 <TextInput
-                    style={styles.textArea}
+                    style={[styles.textArea, { textAlignVertical: 'top' }]}
                     value={reportDetails.details}
                     onChangeText={value => updateReportDetails('details', value)}
                     multiline={true}
@@ -129,6 +144,7 @@ const ReportScreen = ({ route }) => {
             
             <Button title="Submit" onPress={handleReport} color="#28a745" />
         </View>
+        </ScrollView>
     );
 }
 
@@ -139,9 +155,11 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
     },
     header: {
-        fontSize: 24,
+        fontSize: 26,
         fontWeight: "bold",
         marginBottom: 20,
+        textAlign: "center",
+        color: "#21a141",
     },
     inputContainer: {
         marginBottom: 16,

@@ -8,7 +8,13 @@ const getToken = async () => {
     try {
       const token = await AsyncStorage.getItem('authToken');
       if (token !== null) {
-        return JSON.parse(token);
+        const tokenObj = JSON.parse(token);
+        const currentTime = new Date().getTime();
+        if (tokenObj.expiration > currentTime) {
+          return tokenObj;
+        } else {
+          await AsyncStorage.removeItem('authToken');
+        }
       }
       return null;
     } catch (error) {
@@ -54,26 +60,32 @@ const AuthenticatedScreen = ({ user, handleLogout, navigation }) => {
         <View style={{ width: '100%', height: '100%'}}>
             <Header logout={handleLogout} />
             <View style={styles.container}>
-                <Text style={styles.title}>Welcome</Text>
-                <Text style={styles.emailText}>{user.email}</Text>
-                <Image source={require("./../../assets/cover-crops.png")} style={{ width: "100%", height: 200, marginTop: 50, marginBottom: 150 }} />
+
+                <Image source={require("./../../assets/cover-crops.png")} style={{ width: 350, height: 350, marginBottom: 20 }} />
+                <Text style={{ fontSize: 20, marginBottom: 30, textAlign: 'center', width: '80%' }}>
+                    Identify and diagnose plant diseases
+                    instantly with CropHeaIer,
+                    and ensure your crops stay healthy
+                    and thriving.
+                </Text>
+                
                 <TouchableOpacity
                     onPress={() => navigation.navigate("Predict")}
-                    style={{ backgroundColor: "green", padding: 10, borderRadius: 5, width: "100%", alignItems: "center"}}>
+                    style={{ backgroundColor: "green", padding: 10, borderRadius: 5, width: "80%", alignItems: "center"}}>
                     <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
                     Diagnose
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => navigation.navigate("Article List")}
-                    style={{ backgroundColor: "green", padding: 10, borderRadius: 5, width: "100%", alignItems: "center" , marginTop: 10 }}>
+                    style={{ backgroundColor: "green", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" , marginTop: 10 }}>
                     <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
                     Explore
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => navigation.navigate("History")}
-                    style={{ backgroundColor: "green", padding: 10, borderRadius: 5, width: "100%", alignItems: "center" , marginTop: 10 }}>
+                    style={{ backgroundColor: "green", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" , marginTop: 10 }}>
                     <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
                     History
                     </Text>
@@ -121,14 +133,18 @@ const App = ({ navigation }) => {
                 console.log(response.data);
                 // Store the Token in AsyncStorage
                 const token = response.data;
-                await AsyncStorage.setItem('authToken', JSON.stringify(token));
+                const expirationTime = new Date().getTime() + (30 * 24 * 60 * 60 * 1000); // 30 days from now
+                const tokenWithExpiration = { ...token, expiration: expirationTime };
+                await AsyncStorage.setItem('authToken', JSON.stringify(tokenWithExpiration));
                 Alert.alert('Success', 'Logged in successfully!', [{ text: 'OK' }]);
             } else {
                 setUser(response.data);
                 console.log(response.data);
                 // Store the Token in AsyncStorage
                 const token = response.data;
-                await AsyncStorage.setItem('authToken', JSON.stringify(token));
+                const expirationTime = new Date().getTime() + (60 * 60 * 1000); // 1 hour from now
+                const tokenWithExpiration = { ...token, expiration: expirationTime };
+                await AsyncStorage.setItem('authToken', JSON.stringify(tokenWithExpiration));
                 Alert.alert('Success', 'User created successfully!', [{ text: 'OK' }]);
                 // setIsLogin(true); // Switch to login mode after signup
             }
@@ -166,10 +182,9 @@ const App = ({ navigation }) => {
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
+        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: 16,
         backgroundColor: '#f0f0f0',
     },
     authContainer: {
