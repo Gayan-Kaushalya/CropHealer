@@ -110,9 +110,9 @@ const App = ({ navigation }) => {
     const handleAuthentication = async () => {
         try {
             // const url = isLogin ? 'http://10.0.2.2:8001/login/' : 'http://10.0.2.2:8001/register/';          // For Android Emulator
-            const url = isLogin ? 'http://192.168.8.165:8001/login/' : 'http://192.168.8.165:8001/register/';   // For Android Device (My Router IP)
+           // const url = isLogin ? 'http://192.168.8.165:8001/login/' : 'http://192.168.8.165:8001/register/';   // For Android Device (My Router IP)
             // const url = isLogin ? 'http://10.10.16.65:8001/login/' : 'http:/10.10.16.65:8001/register/';   // For Android Device (Sysco Wi-Fi)
-            // const url = isLogin ? 'http://localhost:8001/login/' : 'http://localhost:8001/register/';          // For Web
+             const url = isLogin ? 'http://localhost:8001/login/' : 'http://localhost:8001/register/';          // For Web
             console.log(email, password);
             const response = await axios.post(url, { email, password });
             if (isLogin) {

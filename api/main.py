@@ -18,7 +18,6 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, EmailStr, Field
 from typing import List, Optional, Any
 import logging
-import jwt
 from passlib.context import CryptContext
 from dotenv import load_dotenv
 
@@ -73,7 +72,7 @@ app.add_middleware(
 ##############################################################################################################################################
 
 # Path to the main plant model
-plant_model_path = 'C:/Users/janin/Desktop/Datasets/'+      "models/plantType.h5"
+plant_model_path = "models/plantType.h5"
 CLASS_NAMES = ['Apple', 'Banana', 'Bean', 'Coffee', 'Corn', 'Eggplant', 'Grapes', 'Pepper', 'Potato', 'Rice', 'Sugarcane', 'Tea', 'Tomato']
 
 # Load the main model
@@ -83,19 +82,19 @@ else:
     raise FileNotFoundError(f"Model file not found at path: {plant_model_path}")
 
 # Define paths for crop-specific models
-potato_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/potatoModel.h5"
-tomato_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/tomatoModel.h5"
-pepper_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/pepperModel.h5"
-tea_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/teaModel.h5"
-grapes_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/grapeModel.h5"
-bean_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/beanModel.h5"
-banana_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/bananaModel.h5"
-corn_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/cornModel.h5"
-coffee_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/coffeeModel.h5"
-eggplant_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/eggplantModel.h5"
-sugarcane_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/sugarcaneModel.h5"
-rice_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/riceModel.h5"
-apple_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/appleModel.h5"
+potato_model_path =       "models/potatoModel.h5"
+tomato_model_path =       "models/tomatoModel.h5"
+pepper_model_path =       "models/pepperModel.h5"
+tea_model_path =       "models/teaModel.h5"
+grapes_model_path =       "models/grapeModel.h5"
+bean_model_path =       "models/beanModel.h5"
+banana_model_path =       "models/bananaModel.h5"
+corn_model_path =       "models/cornModel.h5"
+coffee_model_path =       "models/coffeeModel.h5"
+eggplant_model_path =       "models/eggplantModel.h5"
+sugarcane_model_path =       "models/sugarcaneModel.h5"
+rice_model_path =       "models/riceModel.h5"
+apple_model_path =       "models/appleModel.h5"
 
 # Define class names for each crop-specific model
 POTATO_CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]

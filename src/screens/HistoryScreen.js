@@ -39,7 +39,7 @@ const HistoryScreen = () => {
             if (!email) return; // Do not fetch reports if email is not set
 
             try {
-                const url = 'http://192.168.8.165:8001/'; // Adjust to your server IP
+                const url = 'http://localhost:8001/'; // Adjust to your server IP
                 console.log("Email:", email);
                 const response = await axios.get(`${url}getreports`, {
                     params: { email }  // This will append ?email=your_email to the URL
