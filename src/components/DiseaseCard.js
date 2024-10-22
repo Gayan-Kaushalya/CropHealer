@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: "#AFE6B3",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,

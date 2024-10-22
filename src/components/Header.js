@@ -75,7 +75,7 @@ const Header = ({ logout }) => {
                 <TouchableOpacity style={styles.backButton} onPress={toggleMenu}>
                     <FontAwesome name="chevron-right" size={16} color="black" />
                 </TouchableOpacity>
-                {token && <Text style={[styles.menuItem, { marginBottom: 50 }]}>{token.email}</Text>}
+                {token && <Text style={[styles.menuItem, { marginBottom: 50, fontSize:18, fontWeight:"bold" }]}>{token.email}</Text>}
                 <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate("Help")}>
                     <FontAwesome name="question-circle" size={24} color="black" />
                     <Text style={styles.menuItem}>Help</Text>
@@ -85,9 +85,9 @@ const Header = ({ logout }) => {
                     <Text style={styles.menuItem}>About</Text>
                 </TouchableOpacity>
                 {route.name == "Login" ? (
-                    <TouchableOpacity style={[styles.menuButton, { backgroundColor: "#E7CCCC" }]} onPress={logout}>
-                        <FontAwesome name="sign-out" size={24} color="black" />
-                        <Text style={styles.menuItem}>Logout</Text>
+                    <TouchableOpacity style={[styles.menuButton, { backgroundColor: "#C25171" }]} onPress={logout}>
+                        <FontAwesome name="sign-out" size={24} color="white" />
+                        <Text style={[styles.menuItem, {color: "white"}]}>Logout</Text>
                     </TouchableOpacity>
                 ) : (
                     <TouchableOpacity style={styles.menuButton} onPress={() => navigation.navigate("Login")}>
@@ -109,17 +109,17 @@ const styles = StyleSheet.create({
         alignItems: "center",
         padding: 20,
         paddingTop: 20,
-        backgroundColor: "#D7E8BF",
-        borderBottomWidth: 1,
-        borderBottomColor: "#ddd",
-        borderRadius: 10,
+        backgroundColor: "#365E32",
+        borderBottomWidth: 5,
+        borderBottomColor: "#254336",
         elevation: 2,
     },
     headerText: {
         flex: 1,
-        fontSize: 22,
+        fontSize: 28,
         fontWeight: "bold",
         textAlign: "center",
+        color: "#BFF6C3",
     },
     button: {
         height: 50,
@@ -127,23 +127,22 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         paddingVertical: 10,
         paddingHorizontal: 15,
-        borderRadius: 20,
+        backgroundColor: "#ACE1AF",
         borderWidth: 2,
-        borderColor: "black",
-        backgroundColor: "#A5B68D",
+        borderColor: "#BFF6C3",
     },
     menuContainer: {
         position: "absolute",
         top: 20, // Adjust this to lift the menu higher
         right: -10, 
         width: 250, 
-        backgroundColor: "#f4fff4",
+        backgroundColor: "#BAFAB8",
         alignContent: "center",
         alignItems: "center",
         padding: 20,
-        borderWidth: 1,
-        borderColor: "#ddd",
-        borderRadius: 10,
+        elevation: 10,
+        borderTopLeftRadius: 10,
+        borderBottomLeftRadius: 10,
         elevation: 4,
         zIndex: 1,
     },
@@ -165,8 +164,10 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingVertical: 5,
         paddingHorizontal: 25,
-        backgroundColor: "#A5B68D",
+        backgroundColor: "#8ACA88",
         marginVertical: 2,
+        elevation: 2,
         width: "100%",
+        borderRadius: 10,
     },
 });

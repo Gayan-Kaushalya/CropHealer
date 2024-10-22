@@ -108,7 +108,7 @@ CORN_CLASS_NAMES = ['Northern Leaf Blight', 'Common Rust', 'Gray Leaf Spot', 'He
 COFFEE_CLASS_NAMES = ['Coffee Leaf Miner', 'Healthy', 'Phoma Blight', 'Rust of Coffee']
 SUGARCANE_CLASS_NAMES = ['Bacterial Blight', 'Healthy', 'Mosaic Virus', 'Red Rot', 'Sugarcane Common Rust', 'Yellow Leaf Virus']
 RICE_CLASS_NAMES = ['Brown Spot', 'Healthy', 'Rice Hispa', 'Leaf Blast']
-EGGPLANT_CLASS_NAMES = ['Healthy', 'Bacterial Wilt', 'Cercospora Leaf Spot', 'Insect Pest Disease', 'Mosaic Virus', 'Small Leaf Disease', 'White Mold']
+EGGPLANT_CLASS_NAMES = ["Healthy Leaf", "Insect Pest Disease", "Leaf Spot Disease", "Mosaic Virus Disease", "Small Leaf Disease", "White Mold Disease", "Wilt Disease"]
 
 class ImageData(BaseModel):
     base64: str
@@ -130,7 +130,7 @@ def generate_lime_explanation(model, image):
         top_labels=1,
         hide_color=0,
         # num_samples=1000
-        num_samples=10
+        num_samples=1000
     )
 
     top_label = explanation.top_labels[0]
@@ -205,6 +205,8 @@ async def predict(image_data: ImageData):
     crop = CLASS_NAMES[np.argmax(prediction[0])]
 
     # Initialize crop-specific model based on predicted crop
+    global next_model
+    
     if crop == "Potato":
         next_model = tf.keras.models.load_model(potato_model_path)
         crop_class_names = POTATO_CLASS_NAMES
@@ -226,6 +228,7 @@ async def predict(image_data: ImageData):
     elif crop == "Eggplant":
         next_model = tf.keras.models.load_model(eggplant_model_path)
         crop_class_names = EGGPLANT_CLASS_NAMES
+        logging.info("Eggplant model loaded")
     elif crop == "Corn":
         next_model = tf.keras.models.load_model(corn_model_path)
         crop_class_names = CORN_CLASS_NAMES
@@ -268,7 +271,7 @@ async def lime(image_data: ImageData):
     resized_image = tf.image.resize(image, (256, 256))
     
     # Generate LIME heatmap using the main model
-    lime_heatmap = generate_lime_explanation(MODEL, resized_image.numpy().astype(np.uint8))
+    lime_heatmap = generate_lime_explanation(next_model, resized_image.numpy().astype(np.uint8))
 
     return {
         "lime_heatmap": lime_heatmap  # base64 encoded heatmap

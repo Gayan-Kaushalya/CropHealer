@@ -12,7 +12,7 @@ const DiseaseDetailsScreen = ({ route }) => {
             <BackButton />
             <View
                 style={{
-                    backgroundColor: "#fff",
+                    backgroundColor: "#BFF6C3",
                     flex: 1,
                     marginTop: 240,
                     borderTopLeftRadius: 56,

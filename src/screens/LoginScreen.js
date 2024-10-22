@@ -62,9 +62,9 @@ const AuthenticatedScreen = ({ user, handleLogout, navigation }) => {
             <View style={styles.container}>
 
                 <Image source={require("./../../assets/cover-crops.png")} style={{ width: 350, height: 350, marginBottom: 20 }} />
-                <Text style={{ fontSize: 20, marginBottom: 30, textAlign: 'center', width: '80%' }}>
+                <Text style={{ fontSize: 18, marginBottom: 30, textAlign: 'center', width: '80%' }}>
                     Identify and diagnose plant diseases
-                    instantly with CropHeaIer,
+                    instantly with <Text style={{fontWeight:"bold", fontSize:20}}>CropHeaIer</Text>,
                     and ensure your crops stay healthy
                     and thriving.
                 </Text>

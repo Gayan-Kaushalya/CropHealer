@@ -53,8 +53,8 @@ const ArticleListScreen = () => {
   return (
     <View style={{ width: '100%', height: '100%'}}>
       <Header />
-      <View style={{ flex: 1, padding: 16 }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', marginTop: 32, textAlign: 'center' }}>
+      <View style={{ flex: 1, padding: 16, backgroundColor: '#DFF6E3' }}>
+        <Text style={{ fontSize: 28, fontWeight: 'bold', marginTop: 32, textAlign: 'center', color: '#0A6847' }}>
           Disease List
         </Text>
         <SearchFilter

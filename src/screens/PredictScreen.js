@@ -231,25 +231,12 @@ const PredictScreen = () => {
                                               [{ text: "OK" },
                                                 { text: "Login", onPress: () => navigation.navigate("Login") }
                                               ]) }}
-          style={{ backgroundColor: "#f96163", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" }}>
+          style={{ backgroundColor: "#821131", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" }}>
           <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
             Report Prediction
           </Text>
         </TouchableOpacity>
 
-        {/* Report Prediction Button
-        <TouchableOpacity
-          onPress={() => navigation.navigate("FeedbackForm", {
-            plantType: plantType,
-            disease: disease,
-            probability: confidence,
-            photo: base64Image,
-          })}
-          style={{ backgroundColor: "#f96163", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" }}>
-          <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
-            Report Prediction
-          </Text>
-        </TouchableOpacity> */}
       </ScrollView>
     </View>
   );
