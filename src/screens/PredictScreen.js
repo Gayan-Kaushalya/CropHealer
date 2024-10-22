@@ -210,7 +210,7 @@ const PredictScreen = () => {
             {/* Display the LIME heatmap */}
             {limeHeatmap && !heatMapLoading && !predictionLoading &&   (
               <View style={styles.imageContainer}>
-                <Text style={styles.infoText}>Explanation (LIME):</Text>
+                <Text style={styles.infoText}>Explanation :</Text>
                 <Image
                   source={{ uri: `data:image/png;base64,${limeHeatmap}` }} // Display heatmap as an image
                   style={styles.image}

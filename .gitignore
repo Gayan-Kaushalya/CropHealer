@@ -34,11 +34,11 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-# Program data
-%ProgramData%/
 
-gcp/
+
+
 .venv/
 android/
 models/
 .pytest_cache/
+api/__pycache__/

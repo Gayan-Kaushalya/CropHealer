@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import numpy as np
@@ -7,15 +7,11 @@ from PIL import Image
 import tensorflow as tf
 import os
 import base64
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
 from lime import lime_image
 import matplotlib.pyplot as plt
 import io
-
-from fastapi import HTTPException, Depends
-from datetime import timedelta
 from motor.motor_asyncio import AsyncIOMotorClient
-from pydantic import BaseModel, EmailStr, Field
 from typing import List, Optional, Any
 import logging
 from passlib.context import CryptContext
@@ -103,13 +99,13 @@ PEPPER_CLASS_NAMES = ['Bacterial Spot', 'Healthy']
 TEA_CLASS_NAMES = ['Anthracnose', 'Algal Leaf Spot', "Bird's Eye Spot", 'Brown Blight', 'Gray Light', 'Healthy', 'Red Leaf Spot', 'White Spot']
 GRAPE_CLASS_NAMES = ['Black Measles', 'Black Rot', 'Healthy', 'Phoma Blight']
 APPLE_CLASS_NAMES = ['Apple Scab', 'Black Rot', 'Cedar Apple Rust', 'Healthy']
-SOYBEAN_CLASS_NAMES = ['Mosaic Virus', 'Southern Blight', 'Sudden Death Syndrome', 'Yellow Mosaic', 'Bacterial Blight', 'Brown Spot', 'Crestamento', 'Bean Rust', 'Powdery Mildew', 'Septoria']
+SOYBEAN_CLASS_NAMES = ['Angular Leaf Spot', 'Healthy']
 BANANA_CLASS_NAMES = ['Cordana', 'Healthy', 'Pestalotiopsis', 'Sigatoka']
 CORN_CLASS_NAMES = ['Northern Leaf Blight', 'Common Rust', 'Gray Leaf Spot', 'Healthy']
 COFFEE_CLASS_NAMES = ['Coffee Leaf Miner', 'Healthy', 'Phoma Blight', 'Rust of Coffee']
 SUGARCANE_CLASS_NAMES = ['Bacterial Blight', 'Healthy', 'Mosaic Virus', 'Red Rot', 'Sugarcane Common Rust', 'Yellow Leaf Virus']
 RICE_CLASS_NAMES = ['Brown Spot', 'Healthy', 'Rice Hispa', 'Leaf Blast']
-EGGPLANT_CLASS_NAMES = ['Healthy', 'Bacterial Wilt', 'Cercospora Leaf Spot', 'Insect Pest Disease', 'Mosaic Virus', 'Small Leaf Disease', 'White Mold']
+EGGPLANT_CLASS_NAMES = ['Healthy', 'Insect Pest Disease', 'Cercospora Leaf Spot', 'Mosaic Virus', 'Small Leaf Disease', 'White Mold', 'Bacterial Wilt']
 
 class ImageData(BaseModel):
     base64: str
@@ -131,7 +127,7 @@ def generate_lime_explanation(model, image):
         top_labels=1,
         hide_color=0,
         # num_samples=1000    $$$$$$$$$$$$$$$$
-        num_samples=10
+        num_samples=100
     )
 
     top_label = explanation.top_labels[0]
