@@ -130,7 +130,7 @@ def generate_lime_explanation(model, image):
         predict_fn,
         top_labels=1,
         hide_color=0,
-        # num_samples=1000
+        # num_samples=1000    $$$$$$$$$$$$$$$$
         num_samples=10
     )
 
