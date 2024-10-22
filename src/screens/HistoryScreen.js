@@ -7,13 +7,22 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const getToken = async () => {
     try {
-        const token = await AsyncStorage.getItem('authToken');
-        return token ? JSON.parse(token) : null; // Return parsed token or null
+      const token = await AsyncStorage.getItem('authToken');
+      if (token !== null) {
+        const tokenObj = JSON.parse(token);
+        const currentTime = new Date().getTime();
+        if (tokenObj.expiration > currentTime) {
+          return tokenObj;
+        } else {
+          await AsyncStorage.removeItem('authToken');
+        }
+      }
+      return null;
     } catch (error) {
-        console.error('Error retrieving token:', error);
-        return null;
+      console.error('Error retrieving token:', error);
+      return null;
     }
-};
+  };
 
 const HistoryScreen = () => {
     const route = useRoute();
