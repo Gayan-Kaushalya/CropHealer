@@ -99,7 +99,7 @@ PEPPER_CLASS_NAMES = ['Bacterial Spot', 'Healthy']
 TEA_CLASS_NAMES = ['Anthracnose', 'Algal Leaf Spot', "Bird's Eye Spot", 'Brown Blight', 'Gray Light', 'Healthy', 'Red Leaf Spot', 'White Spot']
 GRAPE_CLASS_NAMES = ['Black Measles', 'Black Rot', 'Healthy', 'Phoma Blight']
 APPLE_CLASS_NAMES = ['Apple Scab', 'Black Rot', 'Cedar Apple Rust', 'Healthy']
-SOYBEAN_CLASS_NAMES = ['Angular Leaf Spot', 'Healthy']
+SOYBEAN_CLASS_NAMES = ['Angular Leaf Spot', 'Bean Rust', 'Healthy']
 BANANA_CLASS_NAMES = ['Cordana', 'Healthy', 'Pestalotiopsis', 'Sigatoka']
 CORN_CLASS_NAMES = ['Northern Leaf Blight', 'Common Rust', 'Gray Leaf Spot', 'Healthy']
 COFFEE_CLASS_NAMES = ['Coffee Leaf Miner', 'Healthy', 'Phoma Blight', 'Rust of Coffee']
@@ -202,6 +202,7 @@ async def predict(image_data: ImageData):
     crop = CLASS_NAMES[np.argmax(prediction[0])]
 
     # Initialize crop-specific model based on predicted crop
+    global next_model
     if crop == "Potato":
         next_model = tf.keras.models.load_model(potato_model_path)
         crop_class_names = POTATO_CLASS_NAMES
@@ -264,8 +265,8 @@ async def lime(image_data: ImageData):
     # Resize image for LIME explanation
     resized_image = tf.image.resize(image, (256, 256))
     
-    # Generate LIME heatmap using the main model
-    lime_heatmap = generate_lime_explanation(MODEL, resized_image.numpy().astype(np.uint8))
+    # Generate LIME heatmap using the next model
+    lime_heatmap = generate_lime_explanation(next_model, resized_image.numpy().astype(np.uint8))
 
     return {
         "lime_heatmap": lime_heatmap  # base64 encoded heatmap
