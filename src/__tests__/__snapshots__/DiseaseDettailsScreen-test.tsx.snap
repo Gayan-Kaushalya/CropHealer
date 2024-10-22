@@ -1,0 +1,459 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<DiseaseDetailsScreen /> renders correctly with given disease data 1`] = `
+<RCTScrollView
+  showsVerticalScrollIndicator={false}
+  style={
+    {
+      "backgroundColor": "#ffcccb",
+      "flex": 1,
+    }
+  }
+>
+  <View>
+    <RCTSafeAreaView
+      style={
+        {
+          "flexDirection": "row",
+          "marginHorizontal": 16,
+          "marginTop": 12,
+        }
+      }
+    >
+      <View
+        accessibilityState={
+          {
+            "busy": undefined,
+            "checked": undefined,
+            "disabled": undefined,
+            "expanded": undefined,
+            "selected": undefined,
+          }
+        }
+        accessibilityValue={
+          {
+            "max": undefined,
+            "min": undefined,
+            "now": undefined,
+            "text": undefined,
+          }
+        }
+        accessible={true}
+        collapsable={false}
+        focusable={true}
+        onBlur={[Function]}
+        onClick={[Function]}
+        onFocus={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          {
+            "flex": 1,
+          }
+        }
+        testID="back-button"
+      >
+        <Text />
+      </View>
+    </RCTSafeAreaView>
+    <View
+      style={
+        {
+          "alignItems": "center",
+          "backgroundColor": "#fff",
+          "borderTopLeftRadius": 56,
+          "borderTopRightRadius": 56,
+          "flex": 1,
+          "marginTop": 240,
+          "paddingHorizontal": 16,
+        }
+      }
+    >
+      <View
+        style={
+          {
+            "height": 300,
+            "position": "absolute",
+            "top": -150,
+            "width": 300,
+          }
+        }
+      >
+        <Image
+          source={1}
+          style={
+            {
+              "height": "100%",
+              "resizeMode": "contain",
+              "width": "100%",
+            }
+          }
+        />
+      </View>
+      <Text
+        style={
+          {
+            "fontSize": 24,
+            "fontWeight": "bold",
+            "marginTop": 160,
+          }
+        }
+      >
+        Bacterial Spot
+      </Text>
+      <Text
+        style={
+          {
+            "marginHorizontal": 16,
+            "marginTop": 16,
+            "textAlign": "center",
+          }
+        }
+      >
+        Bacterial Spot is a common disease in plants.
+      </Text>
+      <View
+        style={
+          {
+            "alignSelf": "flex-start",
+            "marginBottom": 16,
+            "marginHorizontal": 22,
+            "paddingRight": 16,
+            "width": "100%",
+          }
+        }
+      >
+        <Text
+          style={
+            {
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "marginTop": 16,
+            }
+          }
+        >
+          Crops:
+        </Text>
+        <Text
+          style={
+            {
+              "marginLeft": 16,
+            }
+          }
+        >
+          Tomato, Pepper, Eggplant
+        </Text>
+        <Text
+          style={
+            {
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "marginTop": 16,
+            }
+          }
+        >
+          Symptoms:
+        </Text>
+        <View
+          style={
+            {
+              "alignItems": "flex-start",
+              "flexDirection": "row",
+              "marginLeft": 16,
+              "marginVertical": 2,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "marginRight": 8,
+              }
+            }
+          >
+            •
+          </Text>
+          <Text
+            style={
+              {
+                "flex": 1,
+              }
+            }
+          >
+            Leaf spots
+          </Text>
+        </View>
+        <View
+          style={
+            {
+              "alignItems": "flex-start",
+              "flexDirection": "row",
+              "marginLeft": 16,
+              "marginVertical": 2,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "marginRight": 8,
+              }
+            }
+          >
+            •
+          </Text>
+          <Text
+            style={
+              {
+                "flex": 1,
+              }
+            }
+          >
+            Wilting
+          </Text>
+        </View>
+        <View
+          style={
+            {
+              "alignItems": "flex-start",
+              "flexDirection": "row",
+              "marginLeft": 16,
+              "marginVertical": 2,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "marginRight": 8,
+              }
+            }
+          >
+            •
+          </Text>
+          <Text
+            style={
+              {
+                "flex": 1,
+              }
+            }
+          >
+            Fruit rot
+          </Text>
+        </View>
+        <Text
+          style={
+            {
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "marginTop": 16,
+            }
+          }
+        >
+          Causes:
+        </Text>
+        <View
+          style={
+            {
+              "alignItems": "flex-start",
+              "flexDirection": "row",
+              "marginLeft": 16,
+              "marginVertical": 2,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "marginRight": 8,
+              }
+            }
+          >
+            •
+          </Text>
+          <Text
+            style={
+              {
+                "flex": 1,
+              }
+            }
+          >
+            Bacteria
+          </Text>
+        </View>
+        <View
+          style={
+            {
+              "alignItems": "flex-start",
+              "flexDirection": "row",
+              "marginLeft": 16,
+              "marginVertical": 2,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "marginRight": 8,
+              }
+            }
+          >
+            •
+          </Text>
+          <Text
+            style={
+              {
+                "flex": 1,
+              }
+            }
+          >
+            Poor drainage
+          </Text>
+        </View>
+        <Text
+          style={
+            {
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "marginTop": 16,
+            }
+          }
+        >
+          Cures:
+        </Text>
+        <View
+          style={
+            {
+              "alignItems": "flex-start",
+              "flexDirection": "row",
+              "marginLeft": 16,
+              "marginVertical": 2,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "marginRight": 8,
+              }
+            }
+          >
+            •
+          </Text>
+          <Text
+            style={
+              {
+                "flex": 1,
+              }
+            }
+          >
+            Remove infected plants
+          </Text>
+        </View>
+        <View
+          style={
+            {
+              "alignItems": "flex-start",
+              "flexDirection": "row",
+              "marginLeft": 16,
+              "marginVertical": 2,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "marginRight": 8,
+              }
+            }
+          >
+            •
+          </Text>
+          <Text
+            style={
+              {
+                "flex": 1,
+              }
+            }
+          >
+            Use resistant varieties
+          </Text>
+        </View>
+        <Text
+          style={
+            {
+              "fontSize": 18,
+              "fontWeight": "bold",
+              "marginTop": 16,
+            }
+          }
+        >
+          Preventive Measures:
+        </Text>
+        <View
+          style={
+            {
+              "alignItems": "flex-start",
+              "flexDirection": "row",
+              "marginLeft": 16,
+              "marginVertical": 2,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "marginRight": 8,
+              }
+            }
+          >
+            •
+          </Text>
+          <Text
+            style={
+              {
+                "flex": 1,
+              }
+            }
+          >
+            Proper irrigation
+          </Text>
+        </View>
+        <View
+          style={
+            {
+              "alignItems": "flex-start",
+              "flexDirection": "row",
+              "marginLeft": 16,
+              "marginVertical": 2,
+            }
+          }
+        >
+          <Text
+            style={
+              {
+                "marginRight": 8,
+              }
+            }
+          >
+            •
+          </Text>
+          <Text
+            style={
+              {
+                "flex": 1,
+              }
+            }
+          >
+            Crop rotation
+          </Text>
+        </View>
+      </View>
+    </View>
+  </View>
+</RCTScrollView>
+`;
