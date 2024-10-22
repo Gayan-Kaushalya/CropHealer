@@ -48,28 +48,7 @@ const WelcomeScreen = ({ navigation }) => {
         </Text>
       </TouchableOpacity>
 
-      {/* Add a button to navigate to the Prediction screen */}
-      <TouchableOpacity
-        onPress={() => navigation.navigate("Predict")}
-        style={{
-          backgroundColor: "green",
-          padding: 10,
-          borderRadius: 5,
-          width: "80%",
-          alignItems: "center",
-        }}
-      >
-        <Text
-          style={{
-            color: "white",
-            fontSize: 20,
-            fontWeight: "bold",
-            textAlign: "center",
-          }}
-        >
-          Diagnose
-        </Text>
-      </TouchableOpacity>
+
 
       <TouchableOpacity
         onPress={() => navigation.navigate("Article List")}

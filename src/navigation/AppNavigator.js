@@ -5,7 +5,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import WelcomeScreen from "../screens/WelcomeScreen";
 import ArticleListScreen from "../screens/ArticleListScreen";
 import DiseaseDetailsScreen from "../screens/DiseaseDetailsScreen";
-//import App  from "../screens/IdentificationScreen";
 import PredictScreen from "../screens/PredictScreen";
 import ReportScreen from "../screens/ReportScreen";
 import LoginScreen from "../screens/LoginScreen";
