@@ -122,8 +122,8 @@ const App = ({ navigation }) => {
     const handleAuthentication = async () => {
         try {
             // const url = isLogin ? 'http://10.0.2.2:8001/login/' : 'http://10.0.2.2:8001/register/';          // For Android Emulator
-            const url = isLogin ? 'http://192.168.8.165:8001/login/' : 'http://192.168.8.165:8001/register/';   // For Android Device (My Router IP)
-            // const url = isLogin ? 'http://10.10.16.65:8001/login/' : 'http:/10.10.16.65:8001/register/';   // For Android Device (Sysco Wi-Fi)
+            // const url = isLogin ? 'http://192.168.8.165:8001/login/' : 'http://192.168.8.165:8001/register/';   // For Android Device (My Router IP)
+            const url = isLogin ? 'http://10.10.16.65:8001/login/' : 'http:/10.10.16.65:8001/register/';   // For Android Device (Campus Wi-Fi)
             // const url = isLogin ? 'http://localhost:8001/login/' : 'http://localhost:8001/register/';          // For Web
             console.log(email, password);
             const response = await axios.post(url, { email, password });
@@ -136,17 +136,16 @@ const App = ({ navigation }) => {
                 const expirationTime = new Date().getTime() + (30 * 24 * 60 * 60 * 1000); // 30 days from now
                 const tokenWithExpiration = { ...token, expiration: expirationTime };
                 await AsyncStorage.setItem('authToken', JSON.stringify(tokenWithExpiration));
-                Alert.alert('Success', 'Logged in successfully!', [{ text: 'OK' }]);
+                // Alert.alert('Success', 'Logged in successfully!', [{ text: 'OK' }]);
             } else {
                 setUser(response.data);
                 console.log(response.data);
                 // Store the Token in AsyncStorage
                 const token = response.data;
-                const expirationTime = new Date().getTime() + (60 * 60 * 1000); // 1 hour from now
+                const expirationTime = new Date().getTime() + (30 * 24 * 60 * 60 * 1000); // 30 days from now
                 const tokenWithExpiration = { ...token, expiration: expirationTime };
                 await AsyncStorage.setItem('authToken', JSON.stringify(tokenWithExpiration));
                 Alert.alert('Success', 'User created successfully!', [{ text: 'OK' }]);
-                // setIsLogin(true); // Switch to login mode after signup
             }
         } catch (error) {
             console.error('Authentication error:', error.response.data.detail);
@@ -185,7 +184,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#f0f0f0',
+        backgroundColor: '#fff',
     },
     authContainer: {
         flex: 1,

@@ -5,6 +5,29 @@ import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { diseaseList } from '../Diseases';
 import Header from '../components/Header';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
+// Function to get the authentication token from AsyncStorage
+const getToken = async () => {
+  try {
+    const token = await AsyncStorage.getItem('authToken');
+    if (token !== null) {
+      const tokenObj = JSON.parse(token);
+      const currentTime = new Date().getTime();
+      if (tokenObj.expiration > currentTime) {
+        return tokenObj;
+      } else {
+        await AsyncStorage.removeItem('authToken');
+      }
+    }
+    return null;
+  } catch (error) {
+    console.error('Error retrieving token:', error);
+    return null;
+  }
+};
+
 
 const PredictScreen = () => {
   const navigation = useNavigation();
@@ -17,6 +40,7 @@ const PredictScreen = () => {
   const [predictionLoading, setPredictionLoading] = useState(false);
   const [heatMapLoading, setHeatMapLoading] = useState(false);
   const [base64Image, setBase64Image] = useState('');
+  const [logged, setLogged] = useState(false);
 
   // Pick an image from the gallery
   const pickImage = async () => {
@@ -32,7 +56,7 @@ const PredictScreen = () => {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [4, 3],
+        aspect: [3, 3],
         quality: 1,
         base64: true,
       });
@@ -53,8 +77,8 @@ const PredictScreen = () => {
 
     try {
       // const url = 'http://10.0.2.2:8001/';          // For Android Emulator
-      const url = 'http://192.168.8.165:8001/';   // For Android Device (My Router IP)
-      // const url = 'http://10.10.16.65:8001/';   // For Android Device (Sysco Wi-Fi)
+      // const url = 'http://192.168.8.165:8001/';   // For Android Device (My Router IP)
+      const url = 'http://10.10.16.65:8001/';   // For Android Device (Campus Wi-Fi)
       // const url = 'http://localhost:8001/';         // For Web
 
       console.log('Sending image to server for prediction...');
@@ -79,6 +103,12 @@ const PredictScreen = () => {
       handleError(error);
     } finally {
       setHeatMapLoading(false); 
+    }
+
+    // Check if user is authenticated
+    const token = await getToken();
+    if (token) {
+      setLogged(true);
     }
   };
 
@@ -190,7 +220,24 @@ const PredictScreen = () => {
           </View>
         )}
 
-        {/* Report Prediction Button */}
+        <TouchableOpacity
+          {...logged ? { onPress: () => navigation.navigate("FeedbackForm", {
+            plantType: plantType,
+            disease: disease,
+            probability: confidence,
+            photo: base64Image,
+          }) } : { onPress: () => Alert.alert("Please login.", 
+                                              "You should be logged in to report prediction.",
+                                              [{ text: "OK" },
+                                                { text: "Login", onPress: () => navigation.navigate("Login") }
+                                              ]) }}
+          style={{ backgroundColor: "#f96163", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" }}>
+          <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
+            Report Prediction
+          </Text>
+        </TouchableOpacity>
+
+        {/* Report Prediction Button
         <TouchableOpacity
           onPress={() => navigation.navigate("FeedbackForm", {
             plantType: plantType,
@@ -202,7 +249,7 @@ const PredictScreen = () => {
           <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
             Report Prediction
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </ScrollView>
     </View>
   );
