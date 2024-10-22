@@ -579,7 +579,7 @@ export const diseaseList = [
   {
     id: "20",
     disease: "Insect Pest",
-    image: require("../assets/pests/insect_pests.jpeg"),
+    image: require("../assets/diseases/insect_pests.jpeg"),
     crops: ["Eggplant"],
     description:
       "Eggplant is susceptible to various insect pests that can significantly affect plant health and fruit yield. Common pests include the Colorado potato beetle, aphids, whiteflies, and spider mites. These pests can cause direct damage by feeding on the leaves, stems, and fruits, leading to reduced photosynthesis, stunted growth, and secondary infections. Integrated pest management practices are essential to control these pests effectively and minimize damage.",
