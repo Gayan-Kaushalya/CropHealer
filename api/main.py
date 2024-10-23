@@ -66,7 +66,7 @@ class ImageData(BaseModel):
     base64: str
 
 
-@app.get("/ping")
+@app.get("/")
 async def ping():
     return "pong"
 
