@@ -152,7 +152,7 @@ def generate_lime_explanation(model, image):
 
 
     plt.imshow(image)
-    plt.imshow(blurred_heatmap, cmap=custom_cmap, alpha=0.8)
+    plt.imshow(blurred_heatmap, cmap=custom_cmap, alpha=0.8,vmin=-positive_heatmap.max(), vmax=positive_heatmap.max())
     plt.axis('off')
 
     buf = io.BytesIO()
