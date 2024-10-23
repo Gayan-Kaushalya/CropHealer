@@ -4,13 +4,9 @@ import uvicorn
 import numpy as np
 from io import BytesIO
 from PIL import Image
-import tensorflow as tf
 import os
-import base64
 from pydantic import BaseModel, EmailStr, Field
 from lime import lime_image
-import matplotlib.pyplot as plt
-import io
 from motor.motor_asyncio import AsyncIOMotorClient
 from typing import List, Optional, Any
 import logging
@@ -73,9 +69,6 @@ app.add_middleware(
 class ImageData(BaseModel):
     base64: str
 
-def read_file_as_image(file) -> np.ndarray:
-    image = np.array(Image.open(BytesIO(file)))
-    return image
 
 @app.get("/ping")
 async def ping():
