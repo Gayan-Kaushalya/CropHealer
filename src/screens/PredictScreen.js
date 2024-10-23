@@ -87,7 +87,7 @@ const PredictScreen = () => {
       const response = await axios.post(url+'predict', { base64: base64Image });
       console.log('Response from server: ', response.data);
 
-      const { crop, class: diseaseClass, confidence: conf} = response.data;
+      const { plant: crop, disease: diseaseClass, probability: conf} = response.data;
       setPlantType(crop);
       setDisease(diseaseClass);
       setConfidence(conf);
@@ -237,19 +237,6 @@ const PredictScreen = () => {
           </Text>
         </TouchableOpacity>
 
-        {/* Report Prediction Button
-        <TouchableOpacity
-          onPress={() => navigation.navigate("FeedbackForm", {
-            plantType: plantType,
-            disease: disease,
-            probability: confidence,
-            photo: base64Image,
-          })}
-          style={{ backgroundColor: "#f96163", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" }}>
-          <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
-            Report Prediction
-          </Text>
-        </TouchableOpacity> */}
       </ScrollView>
     </View>
   );

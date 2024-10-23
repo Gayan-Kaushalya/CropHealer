@@ -16,6 +16,10 @@ from typing import List, Optional, Any
 import logging
 from passlib.context import CryptContext
 from dotenv import load_dotenv
+from gradio_client import Client
+
+predict_client = Client("GayanKK/CropHealer")
+lime_client = Client("GayanKK/Lime")
 
 load_dotenv()
 
@@ -66,7 +70,7 @@ app.add_middleware(
 )
 
 ##############################################################################################################################################
-
+"""
 # Path to the main plant model
 plant_model_path = "models/plantType.h5"
 CLASS_NAMES = ['Apple', 'Banana', 'Bean', 'Coffee', 'Corn', 'Eggplant', 'Grapes', 'Pepper', 'Potato', 'Rice', 'Sugarcane', 'Tea', 'Tomato']
@@ -106,6 +110,8 @@ COFFEE_CLASS_NAMES = ['Coffee Leaf Miner', 'Healthy', 'Phoma Blight', 'Rust of C
 SUGARCANE_CLASS_NAMES = ['Bacterial Blight', 'Healthy', 'Mosaic Virus', 'Red Rot', 'Sugarcane Common Rust', 'Yellow Leaf Virus']
 RICE_CLASS_NAMES = ['Brown Spot', 'Healthy', 'Rice Hispa', 'Leaf Blast']
 EGGPLANT_CLASS_NAMES = ['Healthy', 'Insect Pest Disease', 'Cercospora Leaf Spot', 'Mosaic Virus', 'Small Leaf Disease', 'White Mold', 'Bacterial Wilt']
+"""
+
 
 class ImageData(BaseModel):
     base64: str
@@ -114,41 +120,6 @@ def read_file_as_image(file) -> np.ndarray:
     image = np.array(Image.open(BytesIO(file)))
     return image
 
-def generate_lime_explanation(model, image):
-    explainer = lime_image.LimeImageExplainer()
-
-    def predict_fn(images):
-        images = np.array(images)
-        return model.predict(images)
-
-    explanation = explainer.explain_instance(
-        image,
-        predict_fn,
-        top_labels=1,
-        hide_color=0,
-        # num_samples=1000    $$$$$$$$$$$$$$$$
-        num_samples=100
-    )
-
-    top_label = explanation.top_labels[0]
-    dict_heatmap = dict(explanation.local_exp[top_label])
-    heatmap = np.vectorize(dict_heatmap.get)(explanation.segments)
-
-    plt.imshow(image)
-    plt.imshow(heatmap, cmap="viridis", alpha=0.5)
-    plt.axis('off')
-
-    buf = io.BytesIO()
-    plt.savefig(buf, format='png', bbox_inches='tight', pad_inches=0)
-    plt.close()
-    buf.seek(0)
-
-    heatmap_base64 = base64.b64encode(buf.read()).decode('utf-8')
-    return heatmap_base64
-
-@app.get("/ping")
-async def ping():
-    return "pong"
 
 @app.post("/register/")
 async def signup(user: User):
@@ -189,88 +160,29 @@ async def login(user: User):
 
 @app.post("/predict")
 async def predict(image_data: ImageData):
-    logging.info("Received prediction request")
-    image_data_bytes = base64.b64decode(image_data.base64)
-    image_bytes_io = BytesIO(image_data_bytes)
-    image = Image.open(image_bytes_io)
-    image = read_file_as_image(image_data_bytes)
-
-    resized_image = tf.image.resize(image, (256, 256))
-    img_batch = np.expand_dims(resized_image, 0)
-    prediction = MODEL.predict(img_batch)
-
-    crop = CLASS_NAMES[np.argmax(prediction[0])]
-
-    # Initialize crop-specific model based on predicted crop
-    global next_model
-    if crop == "Potato":
-        next_model = tf.keras.models.load_model(potato_model_path)
-        crop_class_names = POTATO_CLASS_NAMES
-    elif crop == "Tomato":
-        next_model = tf.keras.models.load_model(tomato_model_path)
-        crop_class_names = TOMATO_CLASS_NAMES
-    elif crop == "Pepper":
-        next_model = tf.keras.models.load_model(pepper_model_path)
-        crop_class_names = PEPPER_CLASS_NAMES
-    elif crop == "Tea":
-        next_model = tf.keras.models.load_model(tea_model_path)
-        crop_class_names = TEA_CLASS_NAMES
-    elif crop == "Grapes":
-        next_model = tf.keras.models.load_model(grapes_model_path)
-        crop_class_names = GRAPE_CLASS_NAMES
-    elif crop == "Bean":
-        next_model = tf.keras.models.load_model(bean_model_path)
-        crop_class_names = SOYBEAN_CLASS_NAMES
-    elif crop == "Eggplant":
-        next_model = tf.keras.models.load_model(eggplant_model_path)
-        crop_class_names = EGGPLANT_CLASS_NAMES
-    elif crop == "Corn":
-        next_model = tf.keras.models.load_model(corn_model_path)
-        crop_class_names = CORN_CLASS_NAMES
-    elif crop == "Rice":
-        next_model = tf.keras.models.load_model(rice_model_path)
-        crop_class_names = RICE_CLASS_NAMES
-    elif crop == "Apple":
-        next_model = tf.keras.models.load_model(apple_model_path)
-        crop_class_names = APPLE_CLASS_NAMES
-    elif crop == "Banana":
-        next_model = tf.keras.models.load_model(banana_model_path)
-        crop_class_names = BANANA_CLASS_NAMES
-    elif crop == "Coffee":
-        next_model = tf.keras.models.load_model(coffee_model_path)
-        crop_class_names = COFFEE_CLASS_NAMES
-    elif crop == "Sugarcane":
-        next_model = tf.keras.models.load_model(sugarcane_model_path)
-        crop_class_names = SUGARCANE_CLASS_NAMES
-    else:
-        return {"error": "Unknown crop"}
-
-    prediction = next_model.predict(img_batch)
-    predicted_class = crop_class_names[np.argmax(prediction[0])]
-    confidence = str(round(float(np.max(prediction[0])) * 100, 2)) + "%"
-
-    return {
-        "crop": crop,
-        "class": predicted_class,
-        "confidence": confidence,
-    }
+    try:
+        result = predict_client.predict(base64_string=image_data.base64, api_name="/predict")
+        global plant
+        plant = result['plant']
+        return result
+    except Exception as e:
+        logging.error("Error during prediction: %s", str(e))
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @app.post("/lime")
 async def lime(image_data: ImageData):
-    image_data_bytes = base64.b64decode(image_data.base64)
-    image_bytes_io = BytesIO(image_data_bytes)
-    image = Image.open(image_bytes_io)
-    image = read_file_as_image(image_data_bytes)
-
-    # Resize image for LIME explanation
-    resized_image = tf.image.resize(image, (256, 256))
+    try:
+        result = lime_client.predict(
+		plant=plant,
+		image_code=image_data.base64,
+		api_name="/predict"
+        )
+        return {"lime_heatmap": result}
+    except Exception as e:
+        logging.error("Error during prediction: %s", str(e))
+        raise HTTPException(status_code=500, detail="Internal Server Error")
     
-    # Generate LIME heatmap using the next model
-    lime_heatmap = generate_lime_explanation(next_model, resized_image.numpy().astype(np.uint8))
 
-    return {
-        "lime_heatmap": lime_heatmap  # base64 encoded heatmap
-    }
     
 @app.post("/report")
 async def report(report: Report):
