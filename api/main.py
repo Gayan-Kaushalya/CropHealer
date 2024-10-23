@@ -11,6 +11,8 @@ from pydantic import BaseModel
 from lime import lime_image
 import matplotlib.pyplot as plt
 import io
+from scipy.ndimage import gaussian_filter
+from matplotlib.colors import LinearSegmentedColormap
 
 from fastapi import HTTPException, Depends
 from datetime import timedelta
@@ -71,7 +73,7 @@ app.add_middleware(
 )
 
 # Path to the main plant model
-plant_model_path = 'C:/Users/janin/Desktop/Datasets/'+      "models/plantType.h5"
+plant_model_path = "models/plantType.h5"
 CLASS_NAMES = ['Apple', 'Banana', 'Bean', 'Coffee', 'Corn', 'Eggplant', 'Grapes', 'Pepper', 'Potato', 'Rice', 'Sugarcane', 'Tea', 'Tomato']
 
 # Load the main model
@@ -81,22 +83,22 @@ else:
     raise FileNotFoundError(f"Model file not found at path: {plant_model_path}")
 
 # Define paths for crop-specific models
-potato_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/potatoModel.h5"
-tomato_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/tomatoModel.h5"
-pepper_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/pepperModel.h5"
-tea_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/teaModel.h5"
-grapes_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/grapeModel.h5"
-bean_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/beanModel.h5"
-banana_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/bananaModel.h5"
-corn_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/cornModel.h5"
-coffee_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/coffeeModel.h5"
-eggplant_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/eggplantModel.h5"
-sugarcane_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/sugarcaneModel.h5"
-rice_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/riceModel.h5"
-apple_model_path = 'C:/Users/janin/Desktop/Datasets/'+     "models/appleModel.h5"
+potato_model_path =      "models/potatoModel.h5"
+tomato_model_path =      "models/tomatoModel.h5"
+pepper_model_path =      "models/pepperModel.h5"
+tea_model_path =      "models/teaModel.h5"
+grapes_model_path =      "models/grapeModel.h5"
+bean_model_path =      "models/beanModel.h5"
+banana_model_path =      "models/bananaModel.h5"
+corn_model_path =      "models/cornModel.h5"
+coffee_model_path =      "models/coffeeModel.h5"
+eggplant_model_path =      "models/eggplantModel.h5"
+sugarcane_model_path =      "models/sugarcaneModel.h5"
+rice_model_path =      "models/riceModel.h5"
+apple_model_path =      "models/appleModel.h5"
 
 # Define class names for each crop-specific model
-POTATO_CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
+POTATO_CLASS_NAMES = ["Early Blight", "Healthy","Late Blight"]
 TOMATO_CLASS_NAMES = ['Bacterial Spot', 'Early Blight', 'Late Blight', 'Tomato Leaf Mold', 'Septoria Leaf Spot', 'Two-spotted Spider Mite', 'Target Spot', 'Tomato Yellow Leaf Curl Virus', 'Tomato Mosaic Virus', 'Healthy']
 PEPPER_CLASS_NAMES = ['Bacterial Spot', 'Healthy']
 TEA_CLASS_NAMES = ['Anthracnose', 'Algal Leaf Spot', "Bird's Eye Spot", 'Brown Blight', 'Gray Light', 'Healthy', 'Red Leaf Spot', 'White Spot']
@@ -137,8 +139,20 @@ def generate_lime_explanation(model, image):
     dict_heatmap = dict(explanation.local_exp[top_label])
     heatmap = np.vectorize(dict_heatmap.get)(explanation.segments)
 
+    blurred_heatmap = gaussian_filter(heatmap, sigma=8)  # Adjust sigma for more/less blur
+
+
+
+    colors = [(0, (0, 0, 0, 0)),   # Fully transparent (RGBA: 0, 0, 0, 0)
+            (0.5, (1, 1, 1, 0)),  # White but fully transparent
+            (1, 'red')]  # DarkRed (Visible red)
+    
+    custom_cmap = LinearSegmentedColormap.from_list('custom_cmap', colors)
+    # Define a custom colormap (e.g., red for low values, yellow for middle, green for high values)
+
+
     plt.imshow(image)
-    plt.imshow(heatmap, cmap="viridis", alpha=0.5)
+    plt.imshow(blurred_heatmap, cmap=custom_cmap, alpha=0.8)
     plt.axis('off')
 
     buf = io.BytesIO()

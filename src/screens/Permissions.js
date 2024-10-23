@@ -1,25 +1,25 @@
-import {Alert} from 'react-native';
+import { Alert } from "react-native";
 import {
   check,
   PERMISSIONS,
   RESULTS,
   request,
   openSettings,
-} from 'react-native-permissions';
+} from "react-native-permissions";
 
 //export const isIOS = Platform.OS === 'ios';
 
 function showAlert(msg) {
-  Alert.alert('', msg, [
+  Alert.alert("", msg, [
     {
-      text: 'Cancel',
-      onPress: () => console.log('Cancel Pressed'),
-      style: 'cancel',
+      text: "Cancel",
+      onPress: () => console.log("Cancel Pressed"),
+      style: "cancel",
     },
     {
-      text: 'Settings',
+      text: "Settings",
       onPress: () => {
-        openSettings().catch(() => console.warn('cannot open settings'));
+        openSettings().catch(() => console.warn("cannot open settings"));
       },
     },
   ]);
@@ -38,7 +38,7 @@ const hasCameraPermission = async (withAlert = true) => {
     if (camera === RESULTS.DENIED || camera === RESULTS.BLOCKED) {
       if (withAlert) {
         showAlert(
-          'Permission not granted for camera. You will not able to use camera in this application.',
+          "Permission not granted for camera. You will not able to use camera in this application."
         );
       }
       return false;
@@ -63,7 +63,7 @@ const hasPhotoPermission = async (withAlert = true) => {
     if (photo === RESULTS.DENIED || photo === RESULTS.BLOCKED) {
       if (withAlert) {
         showAlert(
-          'Permission not granted for photos. You will not able to get photos in this application.',
+          "Permission not granted for photos. You will not able to get photos in this application."
         );
       }
       return false;
