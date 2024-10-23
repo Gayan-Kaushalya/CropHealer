@@ -69,49 +69,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-##############################################################################################################################################
-"""
-# Path to the main plant model
-plant_model_path = "models/plantType.h5"
-CLASS_NAMES = ['Apple', 'Banana', 'Bean', 'Coffee', 'Corn', 'Eggplant', 'Grapes', 'Pepper', 'Potato', 'Rice', 'Sugarcane', 'Tea', 'Tomato']
-
-# Load the main model
-if os.path.exists(plant_model_path):
-    MODEL = tf.keras.models.load_model(plant_model_path)
-else:
-    raise FileNotFoundError(f"Model file not found at path: {plant_model_path}")
-
-# Define paths for crop-specific models
-potato_model_path =       "models/potatoModel.h5"
-tomato_model_path =       "models/tomatoModel.h5"
-pepper_model_path =       "models/pepperModel.h5"
-tea_model_path =       "models/teaModel.h5"
-grapes_model_path =       "models/grapeModel.h5"
-bean_model_path =       "models/beanModel.h5"
-banana_model_path =       "models/bananaModel.h5"
-corn_model_path =       "models/cornModel.h5"
-coffee_model_path =       "models/coffeeModel.h5"
-eggplant_model_path =       "models/eggplantModel.h5"
-sugarcane_model_path =       "models/sugarcaneModel.h5"
-rice_model_path =       "models/riceModel.h5"
-apple_model_path =       "models/appleModel.h5"
-
-# Define class names for each crop-specific model
-POTATO_CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy"]
-TOMATO_CLASS_NAMES = ['Bacterial Spot', 'Early Blight', 'Late Blight', 'Tomato Leaf Mold', 'Septoria Leaf Spot', 'Two-spotted Spider Mite', 'Target Spot', 'Tomato Yellow Leaf Curl Virus', 'Tomato Mosaic Virus', 'Healthy']
-PEPPER_CLASS_NAMES = ['Bacterial Spot', 'Healthy']
-TEA_CLASS_NAMES = ['Anthracnose', 'Algal Leaf Spot', "Bird's Eye Spot", 'Brown Blight', 'Gray Light', 'Healthy', 'Red Leaf Spot', 'White Spot']
-GRAPE_CLASS_NAMES = ['Black Measles', 'Black Rot', 'Healthy', 'Phoma Blight']
-APPLE_CLASS_NAMES = ['Apple Scab', 'Black Rot', 'Cedar Apple Rust', 'Healthy']
-SOYBEAN_CLASS_NAMES = ['Angular Leaf Spot', 'Bean Rust', 'Healthy']
-BANANA_CLASS_NAMES = ['Cordana', 'Healthy', 'Pestalotiopsis', 'Sigatoka']
-CORN_CLASS_NAMES = ['Northern Leaf Blight', 'Common Rust', 'Gray Leaf Spot', 'Healthy']
-COFFEE_CLASS_NAMES = ['Coffee Leaf Miner', 'Healthy', 'Phoma Blight', 'Rust of Coffee']
-SUGARCANE_CLASS_NAMES = ['Bacterial Blight', 'Healthy', 'Mosaic Virus', 'Red Rot', 'Sugarcane Common Rust', 'Yellow Leaf Virus']
-RICE_CLASS_NAMES = ['Brown Spot', 'Healthy', 'Rice Hispa', 'Leaf Blast']
-EGGPLANT_CLASS_NAMES = ['Healthy', 'Insect Pest Disease', 'Cercospora Leaf Spot', 'Mosaic Virus', 'Small Leaf Disease', 'White Mold', 'Bacterial Wilt']
-"""
-
 
 class ImageData(BaseModel):
     base64: str
@@ -119,6 +76,10 @@ class ImageData(BaseModel):
 def read_file_as_image(file) -> np.ndarray:
     image = np.array(Image.open(BytesIO(file)))
     return image
+
+@app.get("/ping")
+async def ping():
+    return "pong"
 
 
 @app.post("/register/")
