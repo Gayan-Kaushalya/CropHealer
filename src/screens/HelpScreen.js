@@ -6,7 +6,7 @@ const HelpScreen = () => {
     const navigation = useNavigation();
     return (
         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-            <Image source={require("./../../assets/help.png")} style={{ flex: 0.8, width: "100%", height: "100%" }} />
+            <Image source={require("./../../assets/help.png")} style={{ flex: 0.8, width: "80%", height: "100%" }} />
             <TouchableOpacity
                 onPress={() => navigation.goBack()}
                 style={{ backgroundColor: "green", padding: 10, borderRadius: 5, width: "80%", alignItems: "center", margin:10 }}>

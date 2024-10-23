@@ -12,15 +12,13 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.galaxies.firebase"
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.galaxies.firebase"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -35,11 +33,6 @@
           }
         }
       ]
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "8972255e-82cf-4f70-bc4c-ef4cbd57e457"
-      }
-    }
+    ]
   }
 }

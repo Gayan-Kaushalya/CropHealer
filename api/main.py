@@ -36,6 +36,9 @@ users_collection = db.get_collection("users")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+import sys
+global version
+version = sys.version
 
 # Models
 class Report(BaseModel):
@@ -138,7 +141,7 @@ def generate_lime_explanation(model, image):
     heatmap = np.vectorize(dict_heatmap.get)(explanation.segments)
 
     plt.imshow(image)
-    plt.imshow(heatmap, cmap="viridis", alpha=0.5)
+    plt.imshow(heatmap, cmap="viridis", alpha=0.5, vmin=-heatmap.max(), vmax=heatmap.max())
     plt.axis('off')
 
     buf = io.BytesIO()
@@ -182,6 +185,7 @@ async def login(user: User):
         raise HTTPException(status_code=400, detail="Invalid email or password")
 
     logging.info(f"User logged in: {user.email}")
+    logging.info(version)
 
     # Return user data excluding the password
     return UserResponse(
