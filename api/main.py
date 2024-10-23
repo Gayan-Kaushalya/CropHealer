@@ -1,12 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-import numpy as np
-from io import BytesIO
-from PIL import Image
 import os
 from pydantic import BaseModel, EmailStr, Field
-from lime import lime_image
 from motor.motor_asyncio import AsyncIOMotorClient
 from typing import List, Optional, Any
 import logging
@@ -21,7 +17,7 @@ load_dotenv()
 
 app = FastAPI()
 
-logging.basicConfig(level=logging.INFO)
+#logging.basicConfig(level=logging.INFO)
 
 # Replace with your connection string
 db_url = os.getenv("MONGO_URL")
