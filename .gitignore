@@ -42,3 +42,4 @@ android/
 models/
 .pytest_cache/
 api/__pycache__/
+virtual
