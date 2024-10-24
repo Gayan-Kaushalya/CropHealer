@@ -43,3 +43,4 @@ models/
 .pytest_cache/
 api/__pycache__/
 virtual
+api/aws-sever/
