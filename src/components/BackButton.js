@@ -15,7 +15,7 @@ const BackButton = () => {
         style={{ flex: 1 }}
         onPress={() => navigation.goBack()} // navigation is changed to nav
       >
-        <FontAwesome name={"arrow-circle-left"} size={28} color="black" />
+        <FontAwesome name={"arrow-circle-left"} size={36} color="#DFF6E3" />
       </Pressable>
     </SafeAreaView>
   );

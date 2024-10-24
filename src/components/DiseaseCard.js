@@ -15,7 +15,7 @@ const DiseaseCard = ({ data }) => {
             style={styles.card}
           >
             <Image source={item.image} style={styles.image} />
-            <Text>{item.disease}</Text>
+            <Text style={styles.txt}>{item.disease}</Text>
           </Pressable>
         )}
         numColumns={2}
@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: "#AFE6B3",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -47,6 +47,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 10,
     paddingVertical: 10,
+    width: "48%",
   },
   image: {
     width: 100,
@@ -55,5 +56,11 @@ const styles = StyleSheet.create({
   },
   columnWrapper: {
     justifyContent: "space-between",
+  },
+  txt: {
+    fontSize: 16,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: 10,
   },
 });

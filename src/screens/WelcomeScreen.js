@@ -5,11 +5,11 @@ const WelcomeScreen = ({ navigation }) => {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Image
-        source={require("./../../assets/CropHealer Logo.jpg")}
+        source={require("./../../assets/CropHealer Logo.png")}
         style={{ width: 200, height: 200 }}
       />
 
-      <Text style={{ color: "green", fontSize: 42, fontWeight: "bold" }}>
+      <Text style={{ color: "green", fontSize: 42, fontWeight: "bold", width: "80%", textAlign: "center" }}>
         Welcome to CropHealer!
       </Text>
       <Text
@@ -18,7 +18,8 @@ const WelcomeScreen = ({ navigation }) => {
           fontWeight: "bold",
           marginTop: 20,
           marginBottom: 20,
-          alignContent: "center",
+          textAlign: "center",
+          width: "90%",
           color: "black",
         }}
       >

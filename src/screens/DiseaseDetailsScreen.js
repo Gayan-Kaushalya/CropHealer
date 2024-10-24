@@ -8,11 +8,11 @@ const DiseaseDetailsScreen = ({ route }) => {
     const { disease } = route.params || {};
 
     return (
-        <ScrollView style={{ backgroundColor: disease.color, flex: 1 }} showsVerticalScrollIndicator={false}>
+        <ScrollView style={{ backgroundColor: '#1C511F', flex: 1 }} showsVerticalScrollIndicator={false}>
             <BackButton />
             <View
                 style={{
-                    backgroundColor: "#fff",
+                    backgroundColor: "#DFF6E3",
                     flex: 1,
                     marginTop: 240,
                     borderTopLeftRadius: 56,
@@ -26,7 +26,7 @@ const DiseaseDetailsScreen = ({ route }) => {
                     position: "absolute",
                     top: -150,
                 }}>
-                    <Image source={disease.image} style={{ height: "100%", width: "100%", resizeMode: "contain" }} />
+                    <Image source={disease.image} style={{ height: "100%", width: "100%", borderRadius: 150, borderWidth: 5, borderColor: "white" }} />
                 </View>
 
                 {/* Disease Name */}

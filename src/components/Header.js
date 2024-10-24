@@ -48,6 +48,7 @@ const Header = ({ logout }) => {
 
     checkLoginStatus();
   }, []);
+  
 
   const toggleMenu = () => {
     setMenuVisible(!menuVisible);
@@ -93,7 +94,7 @@ const Header = ({ logout }) => {
           <FontAwesome name="chevron-right" size={16} color="black" />
         </TouchableOpacity>
         {token && (
-          <Text style={[styles.menuItem, { marginBottom: 50 }]}>
+          <Text style={[styles.menuItem, { marginBottom: 50, fontSize: 18 }]}>
             {token.email}
           </Text>
         )}
@@ -109,15 +110,15 @@ const Header = ({ logout }) => {
           onPress={() => navigation.navigate("About")}
         >
           <FontAwesome name="info-circle" size={24} color="black" />
-          <Text style={styles.menuItem}>About</Text>
+          <Text style={styles.menuItem}>About Us</Text>
         </TouchableOpacity>
         {route.name == "Login" ? (
           <TouchableOpacity
-            style={[styles.menuButton, { backgroundColor: "#E7CCCC" }]}
+            style={[styles.menuButton, { backgroundColor: "#922141" }]}
             onPress={logout}
           >
-            <FontAwesome name="sign-out" size={24} color="black" />
-            <Text style={styles.menuItem}>Logout</Text>
+            <FontAwesome name="sign-out" size={24} color="white" />
+            <Text style={[styles.menuItem, {color:'white'}]}>Logout</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
@@ -137,69 +138,70 @@ export default Header;
 
 const styles = StyleSheet.create({
   headerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: 20,
-    paddingTop: 20,
-    backgroundColor: "#D7E8BF",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-    borderRadius: 10,
-    elevation: 2,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      padding: 20,
+      paddingTop: 20,
+      backgroundColor: "#365E32",
+      borderBottomWidth: 5,
+      borderBottomColor: "#254336",
+      elevation: 2,
   },
   headerText: {
-    flex: 1,
-    fontSize: 22,
-    fontWeight: "bold",
-    textAlign: "center",
+      flex: 1,
+      fontSize: 28,
+      fontWeight: "bold",
+      textAlign: "center",
+      color: "#BFF6C3",
   },
   button: {
-    height: 50,
-    width: 50,
-    justifyContent: "center",
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: "black",
-    backgroundColor: "#A5B68D",
+      height: 50,
+      width: 50,
+      justifyContent: "center",
+      paddingVertical: 10,
+      paddingHorizontal: 15,
+      backgroundColor: "#ACE1AF",
+      borderWidth: 2,
+      borderColor: "#BFF6C3",
   },
   menuContainer: {
-    position: "absolute",
-    top: 20, // Adjust this to lift the menu higher
-    right: -10,
-    width: 250,
-    backgroundColor: "#f4fff4",
-    alignContent: "center",
-    alignItems: "center",
-    padding: 20,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    elevation: 4,
-    zIndex: 1,
+      position: "absolute",
+      top: 20, // Adjust this to lift the menu higher
+      right: -10, 
+      width: 250, 
+      backgroundColor: "#BAFAB8",
+      alignContent: "center",
+      alignItems: "center",
+      padding: 20,
+      elevation: 10,
+      borderTopLeftRadius: 10,
+      borderBottomLeftRadius: 10,
+      elevation: 4,
+      zIndex: 1,
   },
   backButton: {
-    marginBottom: 10,
-    padding: 10,
-    alignSelf: "flex-end",
-    borderWidth: 1,
-    borderColor: "black",
-    borderRadius: 8,
+      marginBottom: 10,
+      padding: 10,
+      alignSelf: "flex-end",
+      borderWidth: 1,
+      borderColor: "black",
+      borderRadius: 8,
   },
   menuItem: {
-    fontSize: 22,
-    paddingVertical: 10,
-    marginLeft: 20,
+      fontSize: 22,
+      paddingVertical: 10,
+      marginLeft: 20,
   },
   menuButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 5,
-    paddingHorizontal: 25,
-    backgroundColor: "#A5B68D",
-    marginVertical: 2,
-    width: "100%",
+      flexDirection: "row",
+      alignItems: "center",
+      paddingVertical: 5,
+      paddingHorizontal: 25,
+      backgroundColor: "#8ACA88",
+      marginVertical: 2,
+      elevation: 2,
+      width: "100%",
+      borderRadius: 10,
   },
 });

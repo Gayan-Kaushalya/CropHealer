@@ -57,7 +57,7 @@ const PredictScreen = () => {
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [3, 3],
-        quality: 1,
+        quality: 0.5,
         base64: true,
       });
 
@@ -69,6 +69,7 @@ const PredictScreen = () => {
 
   // Handle image selection
   const handleImageSelection = async (asset) => {
+
     const base64Image = asset.base64;
     setBase64Image(base64Image);
     setFile(asset.uri);
@@ -125,7 +126,7 @@ const PredictScreen = () => {
       const result = await ImagePicker.launchCameraAsync({
         allowsEditing: true,
         aspect: [3, 3],
-        quality: 1,
+        quality: 0.5,
         base64: true,
       });
 
@@ -204,7 +205,7 @@ const PredictScreen = () => {
 
             {/* Display loading indicator for LIME heatmap */}
             {heatMapLoading && ( 
-              <ActivityIndicator size="large" color="#0000ff" />
+              <ActivityIndicator size="large" color="#387478" />
             )}
 
             {/* Display the LIME heatmap */}
@@ -231,7 +232,7 @@ const PredictScreen = () => {
                                               [{ text: "OK" },
                                                 { text: "Login", onPress: () => navigation.navigate("Login") }
                                               ]) }}
-          style={{ backgroundColor: "#f96163", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" }}>
+          style={{ backgroundColor: "#821131", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" }}>
           <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
             Report Prediction
           </Text>
@@ -266,8 +267,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   image: {
-    width: 200,
-    height: 200,
+    width: 300,
+    height: 300,
   },
   errorText: {
     color: 'red',

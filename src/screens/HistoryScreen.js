@@ -127,6 +127,7 @@ const HistoryScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: '#EFFFEF',
     },
     title: {
         marginVertical: 20, // Adjust this margin as necessary
@@ -148,7 +149,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         padding: 10,
         borderBottomWidth: 1,
-        borderBottomColor: '#ccc',
+        backgroundColor: '#DFF6E3',
+        borderBottomColor: '#488488',
     },
     reportText: {
         flex: 1,
@@ -162,9 +164,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         padding: 10,
-        backgroundColor: '#d5d5d5', // Light gray background for header
+        backgroundColor: '#68A4A8', // Light gray background for header
         borderBottomWidth: 2,
-        borderBottomColor: '#ccc',
+        borderBottomColor: '#488488',
     },
     headerText: {
         flex: 1,

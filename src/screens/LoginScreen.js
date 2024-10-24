@@ -64,7 +64,7 @@ const AuthenticatedScreen = ({ user, handleLogout, navigation }) => {
                 <Image source={require("./../../assets/cover-crops.png")} style={{ width: 350, height: 350, marginBottom: 20 }} />
                 <Text style={{ fontSize: 20, marginBottom: 30, textAlign: 'center', width: '80%' }}>
                     Identify and diagnose plant diseases
-                    instantly with CropHeaIer,
+                    instantly with <Text style={{fontWeight:'bold'}}>CropHeaIer</Text>,
                     and ensure your crops stay healthy
                     and thriving.
                 </Text>
@@ -87,7 +87,7 @@ const AuthenticatedScreen = ({ user, handleLogout, navigation }) => {
                     onPress={() => navigation.navigate("History")}
                     style={{ backgroundColor: "green", padding: 10, borderRadius: 5, width: "80%", alignItems: "center" , marginTop: 10 }}>
                     <Text style={{ color: "white", fontSize: 20, fontWeight: "bold", textAlign: "center" }}>
-                    History
+                    Report History
                     </Text>
                 </TouchableOpacity>
             </View>
