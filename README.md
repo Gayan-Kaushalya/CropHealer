@@ -1,9 +1,27 @@
-## Things to do next
 
-- Pull request from Sumuditha to add more disease details
+# CropHealer
+
+CS3501 - Data Science and Engineering Project
 
 
-## Create README file (.md for GitHub .txt for repository submission)
+## Running in local environment
 
-- npm install
-- Add link to download the .h5 files and give instuction to place them in the project folder.
+To install the necessary node modules, run
+
+```bash
+  npm install
+```
+
+If you run into errors, try
+```bash
+  npm install --legacy-peer-deps
+```
+
+If you want the machine learning models (saved in the ".h5" format), download them from [here](https://drive.google.com/drive/folders/1kxCgZmv3I5WMuEKy9Y3rz7X9OoBSFTo3?usp=sharing).
+
+After doing necessary installments, run 
+```bash
+  npm start
+```
+- If you want to emulate on your web browser, press 'w'.
+- If you want to emulate on your Android emulator, press 'a'.
