@@ -212,6 +212,7 @@ const PredictScreen = () => {
             {limeHeatmap && !heatMapLoading && !predictionLoading &&   (
               <View style={styles.imageContainer}>
                 <Text style={styles.infoText}>Explanation :</Text>
+                <Text> <Text style={{color:'red'}}>Red</Text> colour indicates the areas of the image that contributed most to the prediction.</Text>
                 <Image
                   source={{ uri: `data:image/png;base64,${limeHeatmap}` }} // Display heatmap as an image
                   style={styles.image}

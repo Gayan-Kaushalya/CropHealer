@@ -1,0 +1,20 @@
+diff --git a/node_modules/react-native-permission/android/build.gradle b/node_modules/react-native-permission/android/build.gradle
+index e15f6ea..ad27bb8 100644
+--- a/node_modules/react-native-permission/android/build.gradle
++++ b/node_modules/react-native-permission/android/build.gradle
+@@ -1,7 +1,7 @@
+ apply plugin: 'com.android.library'
+ 
+ android {
+-    compileSdkVersion 23
++    compileSdkVersion 30
+     buildToolsVersion "23.0.2"
+ 
+     defaultConfig {
+@@ -11,5 +11,5 @@ android {
+ }
+ 
+ dependencies {
+-    compile 'com.facebook.react:react-native:0.20.1'
++    implementation 'com.facebook.react:react-native:0.20.1'
+ }
